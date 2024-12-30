@@ -18,6 +18,42 @@ var spokenTextQueue = []
 var sessionActive = false
 var lastSpeakTime
 var imgUrl = ""
+let audioContext = null;
+let audioStream = null;
+let volumeMonitor = null;
+// Add new diagnostic functions
+async function checkMicrophoneAccess() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        logDebug('Microphone permission granted');
+        return true;
+    } catch (err) {
+        logError('Microphone access denied:', err);
+        return false;
+    }
+}
+function setupAudioMonitoring(stream) {
+    if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    
+    const analyser = audioContext.createAnalyser();
+    const microphone = audioContext.createMediaStreamSource(stream);
+    microphone.connect(analyser);
+    
+    const dataArray = new Uint8Array(analyser.frequencyBinCount);
+    
+    function checkVolume() {
+        analyser.getByteFrequencyData(dataArray);
+        const volume = dataArray.reduce((a, b) => a + b) / dataArray.length;
+        logDebug('Input volume level:', volume);
+        if (volume < 1) {
+            logDebug('WARNING: Very low input volume detected');
+        }
+    }
+    
+    volumeMonitor = setInterval(checkVolume, 1000);
+} 
 
 // Add these logging functions at the top
 function logDebug(message, data = '') {
@@ -675,7 +711,7 @@ window.clearChatHistory = () => {
 }
 
 // Update microphone function with debug logs
-window.microphone = () => {
+window.microphone = async () => {
     if (document.getElementById('microphone').innerHTML === 'Stop Microphone') {
         logDebug('Stopping microphone...');
         document.getElementById('microphone').disabled = true;
@@ -689,8 +725,36 @@ window.microphone = () => {
                 logError('Failed to stop microphone:', err);
                 document.getElementById('microphone').disabled = false;
             });
+            if (volumeMonitor) {
+                clearInterval(volumeMonitor);
+                volumeMonitor = null;
+            }
         return;
     }
+    if (!await checkMicrophoneAccess()) {
+        alert('Microphone access is required');
+        return;
+    }
+ // Get available audio devices
+ try {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const audioDevices = devices.filter(device => device.kind === 'audioinput');
+    logDebug('Available audio devices:', audioDevices.map(d => d.label));
+} catch (err) {
+    logError('Failed to enumerate audio devices:', err);
+}
+
+// Setup audio monitoring
+try {
+    audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    setupAudioMonitoring(audioStream);
+} catch (err) {
+    logError('Failed to setup audio monitoring:', err);
+}
+
+// Update speech recognizer settings
+speechRecognizer.properties.setProperty("SpeechServiceResponse_RequestSentenceBoundary", "true");
+speechRecognizer.properties.setProperty("SpeechServiceResponse_RequestWordLevelTimestamps", "true");
 
     logDebug('Starting microphone...');
 

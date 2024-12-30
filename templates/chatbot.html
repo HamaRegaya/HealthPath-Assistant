@@ -22,180 +22,100 @@
     <!-- Main CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     
-    <style>
-        .chat-container {
-            height: calc(100vh - 180px);
-            margin: 15px auto;
-            max-width: 1200px;
-            position: relative;
-            background: #fff;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        /* Sidebar */
-        .chat-sidebar {
-            background: #f8f9fa;
-            border-right: 1px solid #dee2e6;
-            padding: 12px;
-            height: 100%;
-            overflow-y: auto;
-            width: 220px;
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            transition: transform 0.3s ease;
-            z-index: 1000;
-            border-radius: 10px 0 0 10px;
-        }
-        .chat-sidebar.hidden {
-            transform: translateX(-220px);
-        }
-
-        /* Toggle Button */
-        .toggle-sidebar {
-            position: absolute;
-            top: 8px;
-            left: 220px; /* Place it exactly where the sidebar ends */
-            background: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-left: none;
-            padding: 6px 8px;
-            border-radius: 0 5px 5px 0;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 12px;
-            z-index: 1100; /* Make sure it's above the sidebar */
-        }
-        .toggle-sidebar:hover {
-            background: #e9ecef;
-        }
-
-        /* Main Chat Area */
-        .chat-main {
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            margin-left: 220px; /* Always reserve space for sidebar */
-            transition: margin-left 0.3s ease;
-            border-radius: 0 10px 10px 0;
-        }
-        
-        .chat-history {
-            margin-bottom: 8px;
-            padding: 8px 10px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            color: #666;
-        }
-        .chat-history i {
-            font-size: 0.9rem;
-            color: #1A76D1;
-        }
-        .chat-history:hover {
-            background: #e9ecef;
-            color: #1A76D1;
-        }
-        .chat-main {
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            margin-left: 220px;
-            transition: margin-left 0.3s ease;
-            border-radius: 0 10px 10px 0;
-        }
-        .chat-main.expanded {
-            margin-left: 0;
-        }
-        .chat-messages {
-            flex-grow: 1;
-            overflow-y: auto;
-            padding: 15px 20px;
-            background: #ffffff;
-        }
-        .message {
-            margin-bottom: 12px;
-            max-width: 65%;
-        }
-        .message-user {
-            margin-left: auto;
-            background: #1A76D1;
-            color: white;
-            padding: 10px 14px;
-            border-radius: 12px 12px 0 12px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-            font-size: 0.9rem;
-        }
-        .message-bot {
-            background: #f8f9fa;
-            padding: 10px 14px;
-            border-radius: 12px 12px 12px 0;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-            font-size: 0.9rem;
-        }
-        .chat-input-container {
-            padding: 12px 15px;
-            background: #ffffff;
-            border-top: 1px solid #dee2e6;
-            border-radius: 0 0 10px 0;
-        }
-        .chat-input-wrapper {
-            display: flex;
-            align-items: center;
-            background: #f8f9fa;
-            border-radius: 20px;
-            padding: 4px 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        .chat-input {
-            flex-grow: 1;
-            border: none;
-            background: transparent;
-            padding: 8px;
-            outline: none;
-            font-size: 0.9rem;
-        }
-        .chat-input-icons {
-            display: flex;
-            gap: 6px;
-        }
-        .chat-icon {
-            cursor: pointer;
-            padding: 6px;
-            border-radius: 50%;
-            transition: all 0.3s ease;
-            color: #666;
-            font-size: 0.9rem;
-        }
-        .chat-icon:hover {
-            background: #e9ecef;
-            color: #1A76D1;
-        }
-        .sidebar-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 12px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid #dee2e6;
-        }
-        .sidebar-header h4 {
-            margin: 0;
-            font-size: 0.95rem;
-            font-weight: 600;
-            color: #444;
-        }
-    </style>
+    <!-- icofont CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/icofont.css') }}">
+    <!-- Slicknav -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/slicknav.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/icofont.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/datepicker.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animate.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/magnific-popup.css') }}">
+        <!-- Medipro CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}">
+    <!-- Chatbot CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/chatbot.css') }}">
+    
 </head>
 <body>
      
-    
+    <header class="header" >
+        <!-- Topbar -->
+        <!-- End Topbar -->
+        <!-- Header Inner -->
+        <div class="header-inner">
+            <div class="container">
+                <div class="inner">
+                    <div class="row">
+                        <div class="col-lg-3 col-md-3 col-12">
+                            <!-- Start Logo -->
+                            <div class="logo">
+                                <a href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='img/logo2.png') }}" alt="#"></a>
+                            </div>
+                            <!-- End Logo -->
+                            <!-- Mobile Nav -->
+                            <div class="mobile-nav"></div>
+                            <!-- End Mobile Nav -->
+                        </div>
+                        <div class="col-lg-7 col-md-9 col-12">
+                            <!-- Main Menu -->
+                            <div class="main-menu">
+                                <nav class="navigation">
+                                    <ul class="nav menu">
+                                        <li class="active"><a href="#">Home <i class="icofont-rounded-down"></i></a>
+                                            <ul class="dropdown">
+                                                <li><a href="index.html">Default Homepage</a></li>
+                                                <li><a href="index2.html">Animation Homepage</a></li>
+                                            </ul>
+                                        </li>
+                                        <li><a href="#">Doctos <i class="icofont-rounded-down"></i></a>
+                                            <ul class="dropdown">
+                                                <li><a href="doctors.html">Doctor</a></li>
+                                                <li><a href="doctor-details.html">Doctor Details</a></li>
+                                            </ul>
+                                        </li>
+                                        <li><a href="#">Services <i class="icofont-rounded-down"></i></a>
+                                            <ul class="dropdown">
+                                                <li><a href="service.html">Service</a></li>
+                                                <li><a href="service-details.html">Service Details</a></li>
+                                            </ul>
+                                        </li>
+                                        <li><a href="#">Pages <i class="icofont-rounded-down"></i></a>
+                                            <ul class="dropdown">
+                                                <li><a href="about.html">About Us</a></li>
+                                                <li><a href="appointment.html">Appointment</a></li>
+                                                <li><a href="time-table.html">Time Table</a></li>
+                                                <li><a href="testimonials.html">Testimonials</a></li>
+                                                <li><a href="pricing.html">Our Pricing</a></li>
+                                                <li><a href="register.html">Sign Up</a></li>
+                                                <li><a href="login.html">Login</a></li>
+                                                <li><a href="faq.html">Faq</a></li>
+                                                <li><a href="mail-success.html">Mail Success</a></li>
+                                                <li><a href="404.html">404 Error</a></li>
+                                            </ul>
+                                        </li>
+                                        <li><a href="#">Blogs <i class="icofont-rounded-down"></i></a>
+                                            <ul class="dropdown">
+                                                <li><a href="blog-grid.html">Blog Grid</a></li>
+                                                <li><a href="blog-single.html">Blog Details</a></li>
+                                            </ul>
+                                        </li>
+                                        <li><a href="contact.html">Contact Us</a></li>
+                                    </ul>
+                                </nav>
+                            </div>
+                            <!--/ End Main Menu -->
+                        </div>
+                        <div class="col-lg-2 col-12">
+                            <div class="get-quote">
+                                <a href="appointment.html" class="btn">Appointment</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--/ End Header Inner -->
+    </header>
     <div class="container-fluid chat-container">
 
         <!-- Chat Sidebar -->
@@ -205,11 +125,11 @@
             </div>
             <div class="chat-history">
                 <i class="fa fa-comments-o"></i>
-                <span>Previous Chat 1</span>
+                <span>Glucose Level</span>
             </div>
             <div class="chat-history">
                 <i class="fa fa-comments-o"></i>
-                <span>Previous Chat 2</span>
+                <span>Meals</span>
             </div>
         </div>
     
@@ -236,7 +156,7 @@
             <!-- Chat Input Area -->
             <div class="chat-input-container">
                 <div class="chat-input-wrapper">
-                    <input type="text" class="chat-input" placeholder="Type your message here...">
+                    <input type="text" style="color: #666;border: 1px solid #ffffff00;border-radius: 3px;padding: 3px;font-weight: 400;" class="chat-input" placeholder="Type your message here...">
                     <div class="chat-input-icons">
                         <div class="chat-icon">
                             <i class="fa fa-microphone"></i>
@@ -259,16 +179,7 @@
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <!-- Bootstrap JS -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    
-    <script>
-        $(document).ready(function() {
-            $('.toggle-sidebar').click(function() {
-                $('.chat-sidebar').toggleClass('hidden');        
-                // Toggle the icon on the button
-                $(this).find('i').toggleClass('fa-chevron-left fa-chevron-right');
-            });
-        });
-    </script>
+    <script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
         
 </body>
 </html>

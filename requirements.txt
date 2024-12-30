@@ -2,3 +2,4 @@ flask
 python-dotenv
 flask-pymongo
 flask-login
+openai

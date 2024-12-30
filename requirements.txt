@@ -3,3 +3,5 @@ python-dotenv
 flask-pymongo
 flask-login
 openai
+langchain_openai
+langchain

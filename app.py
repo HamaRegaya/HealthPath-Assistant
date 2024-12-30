@@ -2,7 +2,14 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_pymongo import PyMongo
 from werkzeug.security import generate_password_hash, check_password_hash
-from openai import AzureOpenAI
+# from openai import AzureOpenAI
+from langchain_openai import AzureChatOpenAI 
+from langchain.chains import ConversationChain
+from langchain.memory import ConversationBufferMemory
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 app = Flask(__name__)
 app.config['MONGO_URI'] = "mongodb+srv://hamaregaya:b0HtiYL8Ekk1co2q@healthpath.qhccv.mongodb.net/HealthPath?retryWrites=true&w=majority" # Change to your MongoDB connection string
@@ -15,6 +22,32 @@ mongo = PyMongo(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
+
+AZURE_OPENAI_API_KEY = ".."
+AZURE_OPENAI_ENDPOINT = ".."
+AZURE_OPENAI_API_VERSION = ".."
+AZURE_OPENAI_CHAT_DEPLOYMENT_NAME= ".."
+
+os.environ["OPENAI_API_KEY"] = AZURE_OPENAI_API_KEY
+os.environ["OPENAI_API_BASE"] = AZURE_OPENAI_ENDPOINT
+os.environ["OPENAI_API_VERSION"] = AZURE_OPENAI_API_VERSION
+os.environ["OPENAI_DEPLOYMENT_NAME"] = AZURE_OPENAI_CHAT_DEPLOYMENT_NAME
+
+# Initialize Azure OpenAI
+llm = AzureChatOpenAI(
+    deployment_name=os.environ["OPENAI_DEPLOYMENT_NAME"],
+)
+
+
+# Initialize conversation memory
+memory = ConversationBufferMemory()
+
+# Create conversation chain
+conversation = ConversationChain(
+    llm=llm,
+    memory=memory,
+    verbose=True
+)
 
 
 # User class for Flask-Login
@@ -67,6 +100,12 @@ def login():
     notification_type = request.args.get('notification_type', None)
     return render_template('login.html', notification=notification, notification_type=notification_type)
 
+
+@app.route('/chat', methods=['POST'])
+def chat():
+    user_input = request.json['message']
+    response = conversation.predict(input=user_input)
+    return jsonify({'response': response})
 
 
 @app.route('/register', methods=['GET', 'POST'])

@@ -189,27 +189,77 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
     <script>
-        // Check if the browser supports the Web Speech API
+        // Function to send message to backend
+        function sendMessage(message) {
+            fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ message: message })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Create and append bot message
+                const botMessage = document.createElement('div');
+                botMessage.className = 'chat-message bot-message';
+                botMessage.innerHTML = `
+                    <div class="message-content">
+                        <p>${data.response}</p>
+                    </div>
+                `;
+                document.querySelector('.chat-messages').appendChild(botMessage);
+                // Scroll to bottom
+                document.querySelector('.chat-messages').scrollTop = document.querySelector('.chat-messages').scrollHeight;
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        // Handle form submission
+        document.querySelector('.chat-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                const message = this.value.trim();
+                if (message) {
+                    // Create and append user message
+                    const userMessage = document.createElement('div');
+                    userMessage.className = 'chat-message user-message';
+                    userMessage.innerHTML = `
+                        <div class="message-content">
+                            <p>${message}</p>
+                        </div>
+                    `;
+                    document.querySelector('.chat-messages').appendChild(userMessage);
+                    
+                    // Send message to backend
+                    sendMessage(message);
+                    
+                    // Clear input
+                    this.value = '';
+                    
+                    // Scroll to bottom
+                    document.querySelector('.chat-messages').scrollTop = document.querySelector('.chat-messages').scrollHeight;
+                }
+            }
+        });
+
+        // Speech recognition code
         if (!('webkitSpeechRecognition' in window)) {
             alert("Your browser doesn't support the Web Speech API. Please use Chrome or Edge.");
         } else {
-            // Create a new instance of SpeechRecognition
             const recognition = new webkitSpeechRecognition();
 
-            // Set properties
-            recognition.continuous = true; // Keep listening
-            recognition.interimResults = true; // Get partial results
-            recognition.lang = 'en-US'; // Set the language to English
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = 'en-US';
 
             let finalTranscript = '';
 
-            // Start button click event
             document.getElementById('start-btn').onclick = () => {
-                finalTranscript = document.querySelector('.chat-input').value; // Preserve existing text
-                recognition.start(); // Start listening
+                finalTranscript = document.querySelector('.chat-input').value;
+                recognition.start();
             };
 
-            // Handle the result when speech is detected
             recognition.onresult = (event) => {
                 let interimTranscript = '';
                 
@@ -225,19 +275,18 @@
                 document.querySelector('.chat-input').value = finalTranscript + interimTranscript;
             };
 
-            // Handle any errors
             recognition.onerror = (event) => {
                 console.error('Speech recognition error:', event.error);
             };
 
-            // Log when the speech recognition service starts or ends
             recognition.onstart = () => {
                 console.log('Speech recognition started');
             };
+            
             recognition.onend = () => {
                 console.log('Speech recognition ended');
-                recognition.start(); // Restart listening when it ends
-            };            
+                recognition.start();
+            };
         }
     </script>   
 </body>

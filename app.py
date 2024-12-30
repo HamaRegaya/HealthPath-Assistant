@@ -120,7 +120,9 @@ def chart():
 @app.route('/chatbot')
 def chatbot():
     return render_template('chatbot.html')
-
+@app.route('/avatar')
+def avatar():
+    return render_template('avatar.html')
 @app.route('/logout')
 @login_required
 def logout():

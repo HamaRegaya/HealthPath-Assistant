@@ -199,7 +199,8 @@
     bottom: 14px;
     left: 50%;
     transform: translateX(-50%);
-    display: flex;
+    display: flex
+;
     flex-direction: row;
     align-items: center;
     justify-content: center;
@@ -211,7 +212,6 @@
     backdrop-filter: blur(8px);
     border-radius: 12px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
 
         .button-container button:hover {
             background: rgba(255, 255, 255, 0.25);
@@ -243,8 +243,9 @@
             }
         }
 		</style>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/avatar.css') }}">
-	<script src="https://aka.ms/csspeech/jsbrowserpackageraw"></script>
+		    <link href="./css/styles.css" rel="stylesheet">
+			<script src="https://aka.ms/csspeech/jsbrowserpackageraw"></script>
+			<script src="./js/chat.js"></script>
     </head>
     <body>
 	
@@ -351,24 +352,7 @@
   <label style="font-size: medium;" for="azureOpenAIDeploymentName">Deployment Name:</label>
   <input id="azureOpenAIDeploymentName" value="gpt-4o" type="text" size="32" style="font-size: medium;" /><br />
   <label style="font-size: medium;" for="prompt">System Prompt:</label><br/>
-  <textarea id="prompt" style="width: 640px;">
-	Here’s a prompt you can use for your chatbot designed to help people with diabetes. This prompt is intended to provide personalized advice, answer questions, and guide users in managing their condition:
-	
-	Prompt:
-	
-	You are a virtual assistant specializing in helping people with diabetes. You have expert knowledge in meal planning, exercise routines, medication management, and lifestyle tips to support diabetics in leading a healthy life. Your responses should be personalized and helpful, considering the user’s individual health needs. Always ensure that the advice is safe, reliable, and grounded in evidence-based practices. You will also provide motivational support for diabetes management.
-	
-	Example Interactions:
-	
-	User: "What can I eat for breakfast if I have diabetes?"
-	
-	AI: "For a diabetic-friendly breakfast, try whole grain toast with avocado and a boiled egg. It’s high in fiber and protein, which can help manage blood sugar levels. Avoid sugary cereals or pastries."
-	User: "How often should I check my blood sugar?"
-	
-	AI: "It’s essential to check your blood sugar levels regularly, but how often depends on your doctor’s recommendations. Typically, diabetics are advised to check their blood sugar at least 4 times a day if you’re managing it with insulin or medications."
-	User: "I’m feeling really tired today. What could be causing this?"
-	
-	AI: "Fatigue is common in people with diabetes and can be caused by several factors, including high or low blood sugar, poor sleep, or stress. It might be a good idea to check your blood sugar levels to see if that’s the cause. If you’re unsure, it’s always best to consult your healthcare provider."</textarea>
+  <textarea id="prompt" style="width: 640px;">You are an AI assistant that helps people find information.</textarea>
   <div style="background-color: white; width: 300px;">
     <input type="checkbox" id="enableOyd" onchange="window.updataEnableOyd()">Enable On Your Data</input><br />
   </div>
@@ -401,9 +385,9 @@
 
   <h2 style="background-color: transparent; width: 300px;">Avatar Configuration</h2>
   <label style="font-size: medium;" for="talkingAvatarCharacter">Avatar Character:</label>
-  <input id="talkingAvatarCharacter" type="text" size="16" style="font-size: medium;" value="lori"></input><br />
+  <input id="talkingAvatarCharacter" type="text" size="16" style="font-size: medium;" value="lisa"></input><br />
   <label style="font-size: medium;" for="talkingAvatarStyle">Avatar Style:</label>
-  <input id="talkingAvatarStyle" type="text" size="16" style="font-size: medium;" value="graceful"></input><br />
+  <input id="talkingAvatarStyle" type="text" size="16" style="font-size: medium;" value="casual-sitting"></input><br />
   <div style="background-color: transparent; width: 200px;">
     <input type="checkbox" id="customizedAvatar">Custom Avatar</input><br />
   </div>
@@ -517,10 +501,7 @@
 		<script src="js/bootstrap.min.js"></script>
 		<!-- Main JS -->
 		<script src="js/main.js"></script>
-    <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'8e4fd819ebffddc0',t:'MTczMjAxNTU3NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='../../cdn-cgi/challenge-platform/h/b/scripts/jsd/22755d9a86c9/maind41d.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
-    <script src="{{ url_for('static', filename='js/avatar.js') }}"></script>
-
-</body>
+    <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'8e4fd819ebffddc0',t:'MTczMjAxNTU3NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='../../cdn-cgi/challenge-platform/h/b/scripts/jsd/22755d9a86c9/maind41d.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 
 <!-- Mirrored from wpthemesgrid.com/themes/medikit/index2.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 19 Nov 2024 11:26:54 GMT -->
 </html>

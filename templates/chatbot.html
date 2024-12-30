@@ -165,7 +165,7 @@
                     <input type="text" style="color: #666;border: 1px solid #ffffff00;border-radius: 3px;padding: 3px;font-weight: 400;" class="chat-input" placeholder="Type your message here...">
                     <div class="chat-input-icons">
                         <div class="chat-icon">
-                            <i class="fa fa-microphone"></i>
+                            <i class="fa fa-microphone" id="start-btn"></i>
                         </div>
                         <div class="chat-icon">
                             <label for="image-input" style="cursor: pointer; margin-bottom: 0;">
@@ -188,6 +188,57 @@
     <!-- Bootstrap JS -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
-        
+    <script>
+        // Check if the browser supports the Web Speech API
+        if (!('webkitSpeechRecognition' in window)) {
+            alert("Your browser doesn't support the Web Speech API. Please use Chrome or Edge.");
+        } else {
+            // Create a new instance of SpeechRecognition
+            const recognition = new webkitSpeechRecognition();
+
+            // Set properties
+            recognition.continuous = true; // Keep listening
+            recognition.interimResults = true; // Get partial results
+            recognition.lang = 'en-US'; // Set the language to English
+
+            let finalTranscript = '';
+
+            // Start button click event
+            document.getElementById('start-btn').onclick = () => {
+                finalTranscript = document.querySelector('.chat-input').value; // Preserve existing text
+                recognition.start(); // Start listening
+            };
+
+            // Handle the result when speech is detected
+            recognition.onresult = (event) => {
+                let interimTranscript = '';
+                
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    const transcript = event.results[i][0].transcript;
+                    if (event.results[i].isFinal) {
+                        finalTranscript += transcript;
+                    } else {
+                        interimTranscript += transcript;
+                    }
+                }
+                
+                document.querySelector('.chat-input').value = finalTranscript + interimTranscript;
+            };
+
+            // Handle any errors
+            recognition.onerror = (event) => {
+                console.error('Speech recognition error:', event.error);
+            };
+
+            // Log when the speech recognition service starts or ends
+            recognition.onstart = () => {
+                console.log('Speech recognition started');
+            };
+            recognition.onend = () => {
+                console.log('Speech recognition ended');
+                recognition.start(); // Restart listening when it ends
+            };            
+        }
+    </script>   
 </body>
 </html>

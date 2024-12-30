@@ -1,0 +1,442 @@
+<!doctype html>
+<html class="no-js" lang="zxx">
+    
+<!-- Mirrored from wpthemesgrid.com/themes/medikit/appointment.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 19 Nov 2024 11:27:02 GMT -->
+<head>
+        <!-- Meta Tags -->
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="keywords" content="Site keywords here">
+		<meta name="description" content="">
+		<meta name='copyright' content=''>
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		
+		<!-- Title -->
+        <title>chart</title>
+		
+		<!-- Favicon -->
+		<link rel="icon" href="{{ url_for('static', filename='img/favicon.png') }}">
+		
+		<!-- Google Fonts -->
+		<link href="https://fonts.googleapis.com/css?family=Poppins:200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i&amp;display=swap" rel="stylesheet">
+
+		<!-- Bootstrap CSS -->
+		<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+		<!-- Nice Select CSS -->
+		<link rel="stylesheet" href="{{ url_for('static', filename='css/nice-select.css') }}">
+		<!-- Font Awesome CSS -->
+		<link rel="stylesheet" href="{{ url_for('static', filename='css/font-awesome.min.css') }}">
+		<!-- icofont CSS -->
+		<link rel="stylesheet" href="{{ url_for('static', filename='css/icofont.css') }}">
+		<!-- Slicknav -->
+		<link rel="stylesheet" href="{{ url_for('static', filename='css/slicknav.min.css') }}">
+		<!-- Owl Carousel CSS -->
+		<link rel="stylesheet" href="{{ url_for('static', filename='css/owl-carousel.css') }}">
+		<!-- Datepicker CSS -->
+		<link rel="stylesheet" href="{{ url_for('static', filename='css/datepicker.css') }}">
+		<!-- Animate CSS -->
+		<link rel="stylesheet" href="{{ url_for('static', filename='css/animate.min.css') }}">
+		<!-- Magnific Popup CSS -->
+		<link rel="stylesheet" href="{{ url_for('static', filename='css/magnific-popup.css') }}">
+		
+		<!-- Medipro CSS -->
+		<link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}">
+		<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+		<link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}">
+		
+		<!-- Color CSS -->
+		<link rel="stylesheet" href="{{ url_for('static', filename='css/color/color1.css') }}">
+		<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+		<link rel="stylesheet" href="#" id="colors">
+		<style>
+			#chart {
+			max-width: 650px;
+			margin: 35px auto;
+			}
+			</style>
+		
+    </head>
+    <body>
+	
+		<!-- Preloader -->
+        <div class="preloader">
+            <div class="loader">
+                <div class="loader-outter"></div>
+                <div class="loader-inner"></div>
+
+                <div class="indicator"> 
+                    <svg width="16px" height="12px">
+                        <polyline id="back" points="1 6 4 6 6 11 10 1 12 6 15 6"></polyline>
+                        <polyline id="front" points="1 6 4 6 6 11 10 1 12 6 15 6"></polyline>
+                    </svg>
+                </div>
+            </div>
+        </div>
+        <!-- End Preloader -->
+		
+		<!-- Medikit Color Plate -->
+		<!-- /End Color Plate -->
+	
+		<!-- Header Area -->
+		<header class="header" >
+			<!-- Header Inner -->
+			<div class="header-inner">
+				<div class="container">
+					<div class="inner">
+						<div class="row">
+							<div class="col-lg-3 col-md-3 col-12">
+								<!-- Start Logo -->
+								<div class="logo">
+									<a href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='img/logo2.png') }}" alt="#"></a>
+								</div>
+								<!-- End Logo -->
+								<!-- Mobile Nav -->
+								<div class="mobile-nav"></div>
+								<!-- End Mobile Nav -->
+							</div>
+							<div class="col-lg-7 col-md-9 col-12">
+								<!-- Main Menu -->
+								<div class="main-menu">
+									<nav class="navigation">
+										<ul class="nav menu">
+											<li class="active"><a href="#">Home <i class="icofont-rounded-down"></i></a>
+												<ul class="dropdown">
+													<li><a href="index-2.html">Default Homepage</a></li>
+													<li><a href="index2.html">Animation Homepage</a></li>
+												</ul>
+											</li>
+											<li><a href="#">Doctos <i class="icofont-rounded-down"></i></a>
+												<ul class="dropdown">
+													<li><a href="doctors.html">Doctor</a></li>
+													<li><a href="doctor-details.html">Doctor Details</a></li>
+												</ul>
+											</li>
+											<li><a href="#">Services <i class="icofont-rounded-down"></i></a>
+												<ul class="dropdown">
+													<li><a href="service.html">Service</a></li>
+													<li><a href="service-details.html">Service Details</a></li>
+												</ul>
+											</li>
+											<li><a href="#">Pages <i class="icofont-rounded-down"></i></a>
+												<ul class="dropdown">
+													<li><a href="about.html">About Us</a></li>
+													<li><a href="appointment.html">Appointment</a></li>
+													<li><a href="time-table.html">Time Table</a></li>
+													<li><a href="testimonials.html">Testimonials</a></li>
+													<li><a href="pricing.html">Our Pricing</a></li>
+													<li><a href="register.html">Sign Up</a></li>
+													<li><a href="login.html">Login</a></li>
+													<li><a href="faq.html">Faq</a></li>
+													<li><a href="mail-success.html">Mail Success</a></li>
+													<li><a href="404.html">404 Error</a></li>
+												</ul>
+											</li>
+											<li><a href="#">Blogs <i class="icofont-rounded-down"></i></a>
+												<ul class="dropdown">
+													<li><a href="blog-grid.html">Blog Grid</a></li>
+													<li><a href="blog-single.html">Blog Details</a></li>
+												</ul>
+											</li>
+											<li><a href="contact.html">Contact Us</a></li>
+										</ul>
+									</nav>
+								</div>
+								<!--/ End Main Menu -->
+							</div>
+							<div class="col-lg-2 col-12">
+								<div class="get-quote">
+									<a href="appointment.html" class="btn">Appointment</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!--/ End Header Inner -->
+		</header>
+		<!-- End Header Area -->
+		
+		<!-- Breadcrumbs -->
+		<div class="breadcrumbs overlay">
+			<div class="container">
+				<div class="bread-inner">
+					<div class="row">
+						<div class="col-12">
+							<h2>Blood Glucose Analysis</h2>
+							<ul class="bread-list">
+								<li><a href="{{ url_for('index') }}">Home</a></li>
+								<li><i class="icofont-simple-right"></i></li>
+								<li class="active">Chart and Report</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- End Breadcrumbs -->
+		
+		<!-- Start Appointment -->
+		<section class="appointment single-page">
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-7 col-md-12 col-12">
+						<div class="appointment-inner">
+							<div class="title">
+								<h3>Your Glucose Level Tracking</h3>
+								<p>Monitor your blood glucose levels over the past 7 days</p>
+							</div>
+							<div id="chart">
+							</div>
+							<!-- <form class="form" action="#">
+								<div class="row">
+									<div class="col-lg-6 col-md-6 col-12">
+										<div class="form-group">
+											<input name="name" type="text" placeholder="Name">
+										</div>
+									</div>
+									<div class="col-lg-6 col-md-6 col-12">
+										<div class="form-group">
+											<input name="email" type="email" placeholder="Email">
+										</div>
+									</div>
+									<div class="col-lg-6 col-md-6 col-12">
+										<div class="form-group">
+											<input name="phone" type="text" placeholder="Phone">
+										</div>
+									</div>
+									<div class="col-lg-6 col-md-6 col-12">
+										<div class="form-group">
+											<div class="nice-select form-control wide" tabindex="0"><span class="current">Department</span>
+												<ul class="list">
+													<li data-value="1" class="option selected ">Department</li>
+													<li data-value="2" class="option">Cardiac Clinic</li>
+													<li data-value="3" class="option">Neurology</li>
+													<li data-value="4" class="option">Dentistry</li>
+													<li data-value="5" class="option">Gastroenterology</li>
+												</ul>
+											</div>
+										</div>
+									</div>
+									<div class="col-lg-6 col-md-6 col-12">
+										<div class="form-group">
+											<div class="nice-select form-control wide" tabindex="0"><span class="current">Doctor</span>
+												<ul class="list">
+													<li data-value="1" class="option selected ">Doctor</li>
+													<li data-value="2" class="option">Dr. Akther Hossain</li>
+													<li data-value="3" class="option">Dr. Dery Alex</li>
+													<li data-value="4" class="option">Dr. Jovis Karon</li>
+												</ul>
+											</div>
+										</div>
+									</div>
+									<div class="col-lg-6 col-md-6 col-12">
+										<div class="form-group">
+											<input type="text" placeholder="Date" id="datepicker">
+										</div>
+									</div>
+									<div class="col-lg-12 col-md-12 col-12">
+										<div class="form-group">
+											<textarea name="message" placeholder="Write Your Message Here....."></textarea>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-12">
+										<div class="form-group">
+											<div class="button">
+												<button type="submit" class="btn">Book An Appointment</button>
+											</div>
+										</div>
+									</div>
+								</div>
+							</form> -->
+						</div>
+					</div>
+					<div class="col-lg-5 col-md-12 ">
+						<div class="work-hour">
+							<h3>Diabetes Management Tips</h3>
+							<ul class="time-sidual">
+								<li class="day">• Maintain a balanced diet</li>
+								<li class="day">• Exercise regularly</li>
+								<li class="day">• Monitor blood sugar levels</li>
+								<li class="day">• Stay hydrated</li>
+								<li class="day">• Take medications as prescribed</li>
+								<li class="day">• Get regular check-ups</li>
+								<li class="day">• Avoid smoking</li>
+								<li class="day">• Limit alcohol intake</li>
+								<li class="day">• Manage stress effectively</li>
+								<li class="day">• Get adequate sleep</li>
+								<li class="day">• Wear proper footwear</li>
+								
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+		<!--/End Appointment -->
+		
+		<!-- Footer Area -->
+		<footer id="footer" class="footer">
+			<!-- Footer Top -->
+			<div class="footer-top">
+				<div class="container">
+					<div class="row">
+						<div class="col-lg-3 col-md-6 col-12">
+							<div class="single-footer">
+								<h2>About Us</h2>
+								<p>We are dedicated to empowering people with diabetes through cutting-edge technology and personalized care solutions.</p>
+								<!-- Social -->
+								<ul class="social">
+									<li><a href="#"><i class="icofont-facebook"></i></a></li>
+									<li><a href="#"><i class="icofont-linkedin"></i></a></li>
+									<li><a href="#"><i class="icofont-twitter"></i></a></li>
+									<li><a href="#"><i class="icofont-instagram"></i></a></li>
+								</ul>
+								<!-- End Social -->
+							</div>
+						</div>
+						<div class="col-lg-3 col-md-6 col-12">
+							<div class="single-footer f-link">
+								<h2>Quick Links</h2>
+								<div class="row">
+									<div class="col-lg-6 col-md-6 col-12">
+										<ul>
+											<li><a href="#"><i class="fa fa-caret-right" aria-hidden="true"></i>Home</a></li>
+											<li><a href="#"><i class="fa fa-caret-right" aria-hidden="true"></i>About Us</a></li>
+											<li><a href="#"><i class="fa fa-caret-right" aria-hidden="true"></i>Contact</a></li>
+											<li><a href="#"><i class="fa fa-caret-right" aria-hidden="true"></i>Blog</a></li>
+											<li><a href="#"><i class="fa fa-caret-right" aria-hidden="true"></i>FAQ</a></li>
+										</ul>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-lg-3 col-md-6 col-12">
+							<div class="single-footer">
+								<h2>Support Hours</h2>
+								<p>We are here to assist you. Contact us during these hours for any support or inquiries.</p>
+								<ul class="time-sidual">
+									<li class="day">Monday - Sunday <span>24h</span></li>
+								</ul>
+							</div>
+						</div>
+						<div class="col-lg-3 col-md-6 col-12">
+							<div class="single-footer">
+								<h2>Stay Updated</h2>
+								<p>Subscribe to our newsletter to receive the latest updates and health tips directly in your inbox.</p>
+								<form action="https://example.com/subscribe" method="post" class="newsletter-inner">
+									<input name="email" placeholder="Email Address" class="common-input" onfocus="this.placeholder = ''"
+										onblur="this.placeholder = 'Enter your email address'" required="" type="email">
+									<button class="button"><i class="icofont-paper-plane"></i></button>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!--/ End Footer Top -->
+			<!-- Copyright -->
+			<!-- <div class="copyright">
+				<div class="container">
+					<div class="row">
+						<div class="col-lg-12 col-md-12 col-12">
+							<div class="copyright-content">
+								<p>&copy; 2024 Diabetes Care Solutions | All Rights Reserved</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div> -->
+			<!--/ End Copyright -->
+		</footer>
+		<!--/ End Footer Area -->
+		<script>
+			var options = {
+				chart: {
+					height: 280,
+					type: "area"
+				},
+				dataLabels: {
+					enabled: false
+				},
+				series: [
+					{
+						name: "Blood Glucose (mg/dL)",
+						data: [142, 165, 128, 187, 145, 156, 133]
+					}
+				],
+				fill: {
+					type: "gradient",
+					gradient: {
+						shadeIntensity: 1,
+						opacityFrom: 0.7,
+						opacityTo: 0.9,
+						stops: [0, 90, 100]
+					}
+				},
+				xaxis: {
+					categories: Array.from({length: 7}, (_, i) => {
+						let date = new Date();
+						date.setDate(date.getDate() - (6 - i));
+						return date.toLocaleDateString('en-US', {month: 'short', day: 'numeric'});
+					})
+				},
+				yaxis: {
+					title: {
+						text: 'Blood Glucose (mg/dL)'
+					},
+					min: 70,
+					max: 200,
+				}
+			};
+			
+			var chart = new ApexCharts(document.querySelector("#chart"), options);
+			
+			chart.render();
+		</script>
+		<!-- jquery Min JS -->
+        <script data-cfasync="false" src="../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="../static/js/jquery.min.js"></script>
+		<!-- jquery Migrate JS -->
+		<script src="../static/js/jquery-migrate-3.0.0.js"></script>
+		<!-- jquery Ui JS -->
+		<script src="../static/js/jquery-ui.min.js"></script>
+		<!-- Easing JS -->
+        <script src="../static/js/easing.js"></script>
+		<!-- Color JS -->
+		<script src="../static/js/colors.js"></script>
+		<!-- Popper JS -->
+		<script src="../static/js/popper.min.js"></script>
+		<!-- Bootstrap Datepicker JS -->
+		<script src="../static/js/bootstrap-datepicker.js"></script>
+		<!-- Jquery Nav JS -->
+        <script src="../static/js/jquery.nav.js"></script>
+		<!-- Slicknav JS -->
+		<script src="../static/js/slicknav.min.js"></script>
+		<!-- ScrollUp JS -->
+        <script src="../static/js/jquery.scrollUp.min.js"></script>
+		<!-- Niceselect JS -->
+		<script src="../static/js/niceselect.js"></script>
+		<!-- Tilt Jquery JS -->
+		<script src="../static/js/tilt.jquery.min.js"></script>
+		<!-- Owl Carousel JS -->
+        <script src="../static/js/owl-carousel.js"></script>
+		<!-- counterup JS -->
+		<script src="../static/js/jquery.counterup.min.js"></script>
+		<!-- Steller JS -->
+		<script src="../static/js/steller.js"></script>
+		<!-- Wow JS -->
+		<script src="../static/js/wow.min.js"></script>
+		<!-- Magnific Popup JS -->
+		<script src="../static/js/jquery.magnific-popup.min.js"></script>
+		<!-- Counter Up CDN JS -->
+		<script src="../../../cdnjs.cloudflare.com/ajax/libs/waypoints/2.0.3/waypoints.min.js"></script>
+		<!-- Bootstrap JS -->
+		<script src="../static/js/bootstrap.min.js"></script>
+		<!-- Main JS -->
+		<script src="../static/js/main.js"></script>
+    <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'8e4fd825fb43ddc0',t:'MTczMjAxNTU3Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='../../cdn-cgi/challenge-platform/h/b/scripts/jsd/22755d9a86c9/maind41d.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+
+<!-- Mirrored from wpthemesgrid.com/themes/medikit/appointment.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 19 Nov 2024 11:27:02 GMT -->
+</html>

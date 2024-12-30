@@ -60,23 +60,19 @@ body {
 }
 
 button {
-    background: rgba(255, 255, 255, 0.15);
-    border: none;
+    background: #ffffff;
+    color: #333;
+    border: 1px solid #dee2e6;
+    padding: 8px 16px;
     border-radius: 8px;
-    color: white;
-    font-family: 'Poppins', sans-serif;
-    font-size: 0.85em;
-    font-weight: 500;
-    margin: 0;
-    padding: 8px 15px;
-    min-width: 120px;
+    cursor: pointer;
     transition: all 0.3s ease;
     cursor: pointer;
     white-space: nowrap;
 }
 
 button:hover {
-    background: rgba(255, 255, 255, 0.25);
+    background: #000000;
     transform: translateY(-2px);
 }
 
@@ -86,7 +82,7 @@ button:active {
 
 button[disabled] {
     background: rgba(255, 255, 255, 0.05);
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(0, 0, 0, 0.5);
     cursor: not-allowed;
     transform: none;
 }
@@ -118,7 +114,7 @@ div#links {
 }
 
 h1 {
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid #007bff;    ;
     font-family: 'Roboto', sans-serif;
     font-weight: 500;
     margin: 0 0 0.8em 0;
@@ -126,13 +122,14 @@ h1 {
 }
 
 h2 {
-    color: #444;
+    color: #007bff;
     font-weight: 500;
 }
 
 h3 {
     border-top: 1px solid #eee;
-    color: #666;
+    color: #007bff;
+   
     font-weight: 500;
     margin: 10px 0 10px 0;
     white-space: nowrap;
@@ -159,7 +156,7 @@ input[type=radio] {
 }
 
 p {
-    color: #444;
+    color: #007bff    ;
     font-weight: 300;
 }
 
@@ -182,7 +179,8 @@ section p:last-of-type {
 }
 
 section {
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #007bff;
+    ;
     margin: 0 0 30px 0;
     padding: 0 0 20px 0;
 }
@@ -327,7 +325,7 @@ textarea {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #ccc;
+    background-color: #007bff;    
     -webkit-transition: .4s;
     transition: .4s;
 }
@@ -339,7 +337,7 @@ textarea {
     width: 20px;
     left: 4px;
     bottom: 3px;
-    background-color: white;
+    background-color: rgb(62, 193, 229);
     -webkit-transition: .4s;
     transition: .4s;
 }

@@ -1,3 +1,4 @@
+import datetime
 from flask import Flask, render_template, request, redirect, url_for, flash,jsonify
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_pymongo import PyMongo
@@ -7,6 +8,7 @@ from langchain_openai import AzureChatOpenAI
 from langchain.chains import ConversationChain
 from langchain.memory import ConversationBufferMemory
 from dotenv import load_dotenv
+from bson import ObjectId
 import os
 import base64
 from io import BytesIO
@@ -58,11 +60,15 @@ class User(UserMixin):
 
 
 # Flask-Login user loader
+
 @login_manager.user_loader
 def load_user(user_id):
-    user_data = mongo.db.users.find_one({"_id": user_id})
-    if user_data:
-        return User(user_id)
+    try:
+        user_data = mongo.db.users.find_one({"_id": ObjectId(user_id)})
+        if user_data:
+            return User(user_id=str(user_data["_id"]))  # Return a User object
+    except Exception as e:
+        print(f"Error loading user: {e}")
     return None
 
 @app.route('/')
@@ -103,10 +109,13 @@ def login():
 
 
 @app.route('/chat', methods=['POST'])
+@login_required
 def chat():
+    # Get inputs from the form
     message = request.form.get('message', '').strip()
     image = request.files.get('image')
-    
+    conversation_name = request.form.get('conversation_name', 'Default Conversation').strip()
+
     if not message and not image:
         return jsonify({'response': 'No input provided'}), 400
 
@@ -129,7 +138,38 @@ def chat():
 
     # Get the response from GPT-4 multimodal
     response = llm.invoke([human_message])
+
+    # Save conversation to MongoDB
+    user_id = str(current_user.id)
+    conversation_data = {
+        'user_message': message,
+        'assistant_response': response.content,
+        'timestamp': datetime.datetime.now(datetime.timezone.utc),
+    }
+
+    # Find the conversation by name and user_id
+    conversation = mongo.db.conversations.find_one({'user_id': user_id, 'name': conversation_name})
+
+    if conversation:
+        # Update the existing conversation by appending the new message
+        mongo.db.conversations.update_one(
+            {'_id': conversation['_id']},
+            {'$push': {'messages': conversation_data}}
+        )
+    else:
+        # Create a new conversation
+        new_conversation = {
+            'user_id': user_id,
+            'name': conversation_name,
+            'messages': [conversation_data],
+            'created_at': datetime.datetime.now(datetime.timezone.utc)
+        }
+        mongo.db.conversations.insert_one(new_conversation)
+
     return jsonify({'response': response.content})
+
+    # Save the conversation to MongoDB
+    
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -182,6 +222,7 @@ def chart():
     return render_template('chart-and-report.html')
 
 @app.route('/chatbot')
+@login_required
 def chatbot():
     return render_template('chatbot.html')
 

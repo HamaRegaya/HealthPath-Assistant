@@ -83,7 +83,8 @@ $(document).ready(function() {
     }
 
     // Function to add a message to the chat
-    function addMessage(message, isUser = false) {
+    function addMessage(message, isUser = false, imageUrl = null) {
+        // Create the message container
         const messageDiv = $('<div>')
             .addClass('message')
             .addClass(isUser ? 'message-user' : 'message-bot')
@@ -94,7 +95,7 @@ $(document).ready(function() {
             const typingIndicator = $('<div class="typing-indicator"><span></span><span></span><span></span></div>');
             chatMessages.append(typingIndicator);
             chatMessages.scrollTop(chatMessages[0].scrollHeight);
-            
+    
             // Start typing after a brief delay
             setTimeout(() => {
                 typingIndicator.remove();
@@ -104,12 +105,25 @@ $(document).ready(function() {
                 chatMessages.scrollTop(chatMessages[0].scrollHeight);
             }, 500); // Reduced delay before typing starts
         } else {
+            // If there's an image, append it above the message div
+            if (imageUrl) {
+                const imagePreview = $('<img>')
+                    .addClass('message-image-preview')
+                    .attr('src', imageUrl)
+                    .attr('alt', 'Uploaded image');
+                chatMessages.append(imagePreview); // Append the image directly to the chat container
+            }
+    
+            // Add the message
             messageDiv.text(message);
             chatMessages.append(messageDiv);
+    
+            // Reveal the message with animation
             setTimeout(() => messageDiv.removeClass('message-hidden'), 50);
             chatMessages.scrollTop(chatMessages[0].scrollHeight);
         }
-    } 
+    }
+     
 
     // Function to clear chat messages
     function clearChat() {
@@ -178,13 +192,14 @@ $(document).ready(function() {
         if (message || imageFile) {
             // Clear inputs immediately
             userInput.val('');
+            const imageUrl = $('.image-preview').attr('src');
             $('#image-input').val(''); // Clear image input
             $('.image-preview').attr('src', ''); // Reset preview
             $('.image-preview-container').hide(); // Hide preview container
     
-            // Add user message
-            if (message) {
-                addMessage(message, true);
+            // Add user message with optional image
+            if (message || imageUrl) {
+                addMessage(message, true, imageUrl);
             }
     
             // Prepare form data
@@ -210,6 +225,7 @@ $(document).ready(function() {
             });
         }
     });
+    
 
     // Image upload handling
     $('#image-input').change(function(e) {

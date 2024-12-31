@@ -182,6 +182,15 @@
     transform: translateY(-2px);
 }
 
+.message-image-preview {
+    width: 20%; /* Adjust size as needed */
+    height: auto;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    margin-left: 80%;
+    display: block;
+}
+
 .message-bot {
     background-color: #f0f2f5;
     align-self: flex-start;

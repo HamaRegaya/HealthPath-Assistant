@@ -178,7 +178,9 @@ $(document).ready(function() {
         if (message || imageFile) {
             // Clear inputs immediately
             userInput.val('');
-            imageInput.val('');
+            $('#image-input').val(''); // Clear image input
+            $('.image-preview').attr('src', ''); // Reset preview
+            $('.image-preview-container').hide(); // Hide preview container
     
             // Add user message
             if (message) {

@@ -23,20 +23,17 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
-AZURE_OPENAI_API_KEY = ".."
-AZURE_OPENAI_ENDPOINT = ".."
-AZURE_OPENAI_API_VERSION = ".."
-AZURE_OPENAI_CHAT_DEPLOYMENT_NAME= ".."
-
-os.environ["OPENAI_API_KEY"] = AZURE_OPENAI_API_KEY
-os.environ["OPENAI_API_BASE"] = AZURE_OPENAI_ENDPOINT
-os.environ["OPENAI_API_VERSION"] = AZURE_OPENAI_API_VERSION
-os.environ["OPENAI_DEPLOYMENT_NAME"] = AZURE_OPENAI_CHAT_DEPLOYMENT_NAME
-
+print(os.getenv("AZURE_OPENAI_CHAT_DEPLOYMENT_NAME"))
+print(os.getenv("AZURE_OPENAI_ENDPOINT"))
+print(os.getenv("AZURE_OPENAI_API_KEY"))
+print(os.getenv("AZURE_OPENAI_API_VERSION"))
 # Initialize Azure OpenAI
 llm = AzureChatOpenAI(
-    deployment_name=os.environ["OPENAI_DEPLOYMENT_NAME"],
+    deployment_name=os.getenv("AZURE_OPENAI_CHAT_DEPLOYMENT_NAME"),
+    api_version=os.getenv("AZURE_OPENAI_API_VERSION"),
+    temperature=0
 )
+
 
 
 # Initialize conversation memory

@@ -135,6 +135,7 @@
     font-size: 0.9rem;
     outline: none;
     background: white;
+    max-width: 60%;
 }
 
 .edit-title-input:focus {

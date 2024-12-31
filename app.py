@@ -8,6 +8,10 @@ from langchain.chains import ConversationChain
 from langchain.memory import ConversationBufferMemory
 from dotenv import load_dotenv
 import os
+import base64
+from io import BytesIO
+from PIL import Image
+import httpx
 
 load_dotenv()
 
@@ -100,9 +104,32 @@ def login():
 
 @app.route('/chat', methods=['POST'])
 def chat():
-    user_input = request.json['message']
-    response = conversation.predict(input=user_input)
-    return jsonify({'response': response})
+    message = request.form.get('message', '').strip()
+    image = request.files.get('image')
+    
+    if not message and not image:
+        return jsonify({'response': 'No input provided'}), 400
+
+    # Prepare the input for GPT-4 multimodal
+    gpt_input = []
+
+    if message:
+        gpt_input.append({"type": "text", "text": message})
+
+    if image:
+        image_data = base64.b64encode(image.read()).decode("utf-8")
+        gpt_input.append({
+            "type": "image_url",
+            "image_url": {"url": f"data:image/jpeg;base64,{image_data}"}
+        })
+
+    # Create a human message for GPT-4 multimodal
+    from langchain.schema import HumanMessage
+    human_message = HumanMessage(content=gpt_input)
+
+    # Get the response from GPT-4 multimodal
+    response = llm.invoke([human_message])
+    return jsonify({'response': response.content})
 
 
 @app.route('/register', methods=['GET', 'POST'])

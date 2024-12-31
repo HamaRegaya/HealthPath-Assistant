@@ -20,6 +20,7 @@ $(document).ready(function() {
     const chatMessages = $('#chat-messages');
     const chatForm = $('#chat-form');
     const userInput = $('#user-input');
+    const imageInput = $('#image-input');
 
     // Function to create editable chat history item
     function createChatHistoryItem(title) {
@@ -169,28 +170,38 @@ $(document).ready(function() {
     addMessage("Hello! I'm your diabetes management assistant. How can I help you today?", false);
 
     // Handle form submission
-    chatForm.on('submit', function(e) {
+    chatForm.on('submit', function (e) {
         e.preventDefault();
         const message = userInput.val().trim();
-        
-        if (message) {
-            // Clear input immediately
+        const imageFile = imageInput[0].files[0];
+    
+        if (message || imageFile) {
+            // Clear inputs immediately
             userInput.val('');
-            
+            imageInput.val('');
+    
             // Add user message
-            addMessage(message, true);
-            
+            if (message) {
+                addMessage(message, true);
+            }
+    
+            // Prepare form data
+            const formData = new FormData();
+            if (message) formData.append('message', message);
+            if (imageFile) formData.append('image', imageFile);
+    
             // Show typing indicator immediately for bot response
             $.ajax({
                 url: '/chat',
                 method: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({ message: message }),
-                success: function(response) {
+                processData: false,
+                contentType: false,
+                data: formData,
+                success: function (response) {
                     // Add bot response
                     addMessage(response.response, false);
                 },
-                error: function(error) {
+                error: function (error) {
                     console.error('Error:', error);
                     addMessage('Sorry, there was an error processing your request.', false);
                 }

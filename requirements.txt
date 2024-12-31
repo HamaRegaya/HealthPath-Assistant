@@ -5,3 +5,4 @@ flask-login
 openai
 langchain_openai
 langchain
+pillow

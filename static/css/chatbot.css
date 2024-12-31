@@ -183,77 +183,43 @@
     margin-bottom: 0;
 }
 
-.message-bot ul, 
+/* Style for lists (Markdown bullet points) */
+.message-bot ul {
+    margin: 10px 0;
+    padding-left: 20px;
+    list-style-type: disc;
+}
+
+/* Style for ordered lists (Markdown numbered lists) */
 .message-bot ol {
     margin: 10px 0;
     padding-left: 20px;
+    list-style-type: decimal;
 }
 
-.message-bot li {
-    margin: 5px 0;
-}
-
-.message-bot code {
-    background-color: #e8eaed;
-    padding: 2px 4px;
-    border-radius: 4px;
-    font-family: 'Consolas', 'Monaco', monospace;
-    font-size: 0.9em;
-}
-
-.message-bot pre {
-    background-color: #282c34;
-    padding: 15px;
-    border-radius: 8px;
-    overflow-x: auto;
-    margin: 10px 0;
-}
-
-.message-bot pre code {
-    background-color: transparent;
-    padding: 0;
-    color: #abb2bf;
-}
-
-.message-bot a {
-    color: #1A76D1;
-    text-decoration: none;
-}
-
-.message-bot a:hover {
-    text-decoration: underline;
-}
-
-.message-bot blockquote {
-    border-left: 4px solid #1A76D1;
-    margin: 10px 0;
-    padding: 10px 20px;
-    background-color: #e8eaed;
-    border-radius: 4px;
-}
-
-.message-bot table {
-    border-collapse: collapse;
-    margin: 10px 0;
-    width: 100%;
-}
-
-.message-bot th,
-.message-bot td {
-    border: 1px solid #dee2e6;
-    padding: 8px;
-    text-align: left;
-}
-
-.message-bot th {
-    background-color: #e8eaed;
-}
-
+/* Style for images */
 .message-bot img {
     max-width: 100%;
     height: auto;
     border-radius: 4px;
     margin: 10px 0;
+}
+
+/* Style for headers */
+.message-bot h1,
+.message-bot h2,
+.message-bot h3 {
+    margin: 10px 0;
+    font-weight: bold;
+}
+
+/* Style for bold and italic text */
+.message-bot strong {
+    font-weight: bold;
+}
+
+.message-bot em {
+    font-style: italic;
 }
 
 .message-user {

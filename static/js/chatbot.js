@@ -1,15 +1,15 @@
 $(document).ready(function() {
     // Configure marked.js
-    marked.setOptions({
-        highlight: function(code, language) {
-            if (language && hljs.getLanguage(language)) {
-                return hljs.highlight(code, { language: language }).value;
-            }
-            return hljs.highlightAuto(code).value;
-        },
-        breaks: true,
-        gfm: true
-    });
+    // marked.setOptions({
+    //     highlight: function(code, language) {
+    //         if (language && hljs.getLanguage(language)) {
+    //             return hljs.highlight(code, { language: language }).value;
+    //         }
+    //         return hljs.highlightAuto(code).value;
+    //     },
+    //     breaks: true,
+    //     gfm: true
+    // });
 
     // Sidebar toggle functionality
     $('.toggle-sidebar').click(function() {
@@ -69,38 +69,28 @@ $(document).ready(function() {
         input.insertAfter(titleSpan);
         input.focus();
     }
-
-    // Function to safely render markdown
-    function renderMarkdown(text) {
-        try {
-            return marked.parse(text);
-        } catch (e) {
-            console.error('Markdown parsing error:', e);
-            return text;
-        }
-    }
-
+    function renderMarkdown(markdown) {
+        return marked(markdown);
+    }   
     // Function to add a message to the chat
     function addMessage(message, isUser = false) {
-        const messageDiv = $('<div>').addClass('message').addClass(isUser ? 'message-user' : 'message-bot');
-        
-        if (isUser) {
-            messageDiv.text(message);
-        } else {
-            // For bot messages, render markdown
+        const messageDiv = $('<div>')
+            .addClass('message')
+            .addClass(isUser ? 'message-user' : 'message-bot');
+    
+        if (!isUser) {
+            // Render Markdown or structured content for bot messages
             messageDiv.html(renderMarkdown(message));
-            
-            // Initialize syntax highlighting for code blocks
-            messageDiv.find('pre code').each(function(i, block) {
-                hljs.highlightBlock(block);
-            });
+        } else {
+            // Plain text for user messages
+            messageDiv.text(message);
         }
-        
+    
         chatMessages.append(messageDiv);
-        
+    
         // Scroll to bottom
         chatMessages.scrollTop(chatMessages[0].scrollHeight);
-    }
+    } 
 
     // Function to clear chat messages
     function clearChat() {

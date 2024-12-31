@@ -72,24 +72,42 @@ $(document).ready(function() {
     function renderMarkdown(markdown) {
         return marked(markdown);
     }   
+    // Function to simulate typing effect
+    function typeMessage(element, text, index = 0) {
+        if (index < text.length) {
+            let currentText = text.substring(0, index + 1);
+            element.html(renderMarkdown(currentText));
+            setTimeout(() => typeMessage(element, text, index + 1), 10); // Faster typing speed
+        }
+    }
+
     // Function to add a message to the chat
     function addMessage(message, isUser = false) {
         const messageDiv = $('<div>')
             .addClass('message')
-            .addClass(isUser ? 'message-user' : 'message-bot');
+            .addClass(isUser ? 'message-user' : 'message-bot')
+            .addClass('message-hidden');
     
         if (!isUser) {
-            // Render Markdown or structured content for bot messages
-            messageDiv.html(renderMarkdown(message));
+            // Add typing indicator immediately
+            const typingIndicator = $('<div class="typing-indicator"><span></span><span></span><span></span></div>');
+            chatMessages.append(typingIndicator);
+            chatMessages.scrollTop(chatMessages[0].scrollHeight);
+            
+            // Start typing after a brief delay
+            setTimeout(() => {
+                typingIndicator.remove();
+                chatMessages.append(messageDiv);
+                messageDiv.removeClass('message-hidden');
+                typeMessage(messageDiv, message);
+                chatMessages.scrollTop(chatMessages[0].scrollHeight);
+            }, 500); // Reduced delay before typing starts
         } else {
-            // Plain text for user messages
             messageDiv.text(message);
+            chatMessages.append(messageDiv);
+            setTimeout(() => messageDiv.removeClass('message-hidden'), 50);
+            chatMessages.scrollTop(chatMessages[0].scrollHeight);
         }
-    
-        chatMessages.append(messageDiv);
-    
-        // Scroll to bottom
-        chatMessages.scrollTop(chatMessages[0].scrollHeight);
     } 
 
     // Function to clear chat messages
@@ -153,31 +171,31 @@ $(document).ready(function() {
     // Handle form submission
     chatForm.on('submit', function(e) {
         e.preventDefault();
-        
         const message = userInput.val().trim();
-        if (!message) return;
-
-        // Add user message to chat
-        addMessage(message, true);
         
-        // Clear input
-        userInput.val('');
-
-        // Send message to backend
-        $.ajax({
-            url: '/chat',
-            method: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({ message: message }),
-            success: function(response) {
-                // Add bot response to chat
-                addMessage(response.response, false);
-            },
-            error: function(error) {
-                console.error('Error:', error);
-                addMessage("I'm sorry, I encountered an error. Please try again.", false);
-            }
-        });
+        if (message) {
+            // Clear input immediately
+            userInput.val('');
+            
+            // Add user message
+            addMessage(message, true);
+            
+            // Show typing indicator immediately for bot response
+            $.ajax({
+                url: '/chat',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ message: message }),
+                success: function(response) {
+                    // Add bot response
+                    addMessage(response.response, false);
+                },
+                error: function(error) {
+                    console.error('Error:', error);
+                    addMessage('Sorry, there was an error processing your request.', false);
+                }
+            });
+        }
     });
 
     // Image upload handling

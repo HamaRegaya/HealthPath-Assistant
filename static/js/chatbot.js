@@ -342,27 +342,45 @@ $(document).ready(function() {
     // Handle chat form submission
     chatForm.submit(function(e) {
         e.preventDefault();
-        const userMessage = userInput.val().trim();
+        const message = userInput.val().trim();
         const imageFile = imageInput[0].files[0];
         
-        if (!userMessage && !imageFile) return;
+        if (!message && !imageFile) {
+            return;
+        }
 
-        // Add user message to chat
-        addMessage(userMessage, true);
+        // Clear input
         userInput.val('');
-        imageInput.val('');
-        $('#selected-image-preview').empty();
-
+        
+        // Create FormData object
         const formData = new FormData();
-        formData.append('message', userMessage);
+        if (message) {
+            formData.append('message', message);
+        }
         if (imageFile) {
             formData.append('image', imageFile);
         }
 
-        // Send message to server
+        // Add user message to chat
+        if (imageFile) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                addMessage(message || '', true, e.target.result);
+            }
+            reader.readAsDataURL(imageFile);
+        } else if (message) {
+            addMessage(message, true);
+        }
+
+        // Clear image preview
+        $('.image-preview').attr('src', '');
+        $('.image-preview-container').hide();
+        $('#image-input').val('');
+
+        // Send to server
         $.ajax({
             url: '/chat',
-            method: 'POST',
+            type: 'POST',
             data: formData,
             processData: false,
             contentType: false,

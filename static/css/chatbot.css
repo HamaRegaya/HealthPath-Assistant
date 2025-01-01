@@ -95,7 +95,7 @@
 
 .chat-history i {
     color: #1A76D1;
-    margin-right: 10px;
+    margin-right: 5px;
 }
 
 .chat-history span {
@@ -186,12 +186,20 @@
 }
 
 .message-image-preview {
-    width: 20%; /* Adjust size as needed */
+    width: 20%;
     height: auto;
-    margin-bottom: 5px;
-    border-radius: 5px;
-    margin-left: 80%;
+    margin-bottom: 8px;
+    border-radius: 8px;
     display: block;
+    margin-left: 79%;
+}
+
+.message-user .message-image-preview {
+    margin-left: auto; /* Align to the right for user messages */
+}
+
+.message-bot .message-image-preview {
+    margin-right: auto; /* Align to the left for bot messages */
 }
 
 .message-bot {

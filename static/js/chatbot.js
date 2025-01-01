@@ -243,7 +243,7 @@ $(document).ready(function() {
             method: 'POST',
             contentType: 'application/json',
             data: JSON.stringify({
-                title: 'New Conversation'
+                title: 'New Chat'
             })
         })
         .done(function(response) {
@@ -252,7 +252,7 @@ $(document).ready(function() {
             clearChat();
         })
         .fail(function(error) {
-            console.error('Error creating new conversation:', error);
+            console.error('Error creating New Chat:', error);
         });
     });
 

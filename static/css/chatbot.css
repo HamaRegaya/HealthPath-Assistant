@@ -192,6 +192,7 @@
     border-radius: 8px;
     display: block;
     margin-left: 79%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .message-user .message-image-preview {

@@ -42,6 +42,7 @@ $(document).ready(function() {
     function makeEditable(chatHistoryItem) {
         const titleSpan = chatHistoryItem.find('.chat-title');
         const currentTitle = titleSpan.text();
+        const conversationId = chatHistoryItem.attr('data-conversation-id');
         
         // Create input field
         const input = $('<input>')
@@ -52,8 +53,11 @@ $(document).ready(function() {
                     const newTitle = $(this).val().trim();
                     if (newTitle) {
                         titleSpan.text(newTitle);
-                        input.remove();
+                        $(this).remove();
                         titleSpan.show();
+                        
+                        // Save the new title to database
+                        updateConversationTitle(conversationId, newTitle);
                     }
                 }
             })
@@ -61,15 +65,18 @@ $(document).ready(function() {
                 const newTitle = $(this).val().trim();
                 if (newTitle) {
                     titleSpan.text(newTitle);
+                    // Save the new title to database
+                    updateConversationTitle(conversationId, newTitle);
                 }
-                input.remove();
+                $(this).remove();
                 titleSpan.show();
             });
-
+        
         titleSpan.hide();
         input.insertAfter(titleSpan);
         input.focus();
     }
+
     function renderMarkdown(markdown) {
         return marked(markdown);
     }   
@@ -127,40 +134,189 @@ $(document).ready(function() {
 
     // Function to clear chat messages
     function clearChat() {
-        chatMessages.empty();
+        $('#chat-messages').empty();
         addMessage("Hello! I'm your diabetes management assistant. How can I help you today?", false);
+    }
+
+    let currentConversationId = null;
+    const chatHistoryContainer = $('.chat-sidebar');
+
+    // Load conversations from the server
+    function loadConversations() {
+        $.get('/get_conversations')
+            .done(function(conversations) {
+                // Clear existing conversations except the header
+                $('.chat-history').remove();
+                
+                conversations.forEach(function(conv) {
+                    const chatItem = createChatHistoryItem(conv.title);
+                    chatItem.attr('data-conversation-id', conv.id);
+                    chatItem.insertAfter('.sidebar-header');
+                });
+
+                // If this is the first load and no conversation is selected, load the first one
+                if (!currentConversationId && conversations.length > 0) {
+                    loadConversation(conversations[0].id);
+                }
+            })
+            .fail(function(error) {
+                console.error('Error loading conversations:', error);
+            });
+    }
+
+    // Load conversations on page load
+    loadConversations();
+
+    // Save current conversation
+    function saveCurrentConversation() {
+        if (!currentConversationId) return;
+
+        const messages = [];
+        $('.chat-message').each(function() {
+            messages.push({
+                content: $(this).find('.message-content').html(),
+                isUser: $(this).hasClass('user-message')
+            });
+        });
+
+        $.ajax({
+            url: '/save_conversation',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                id: currentConversationId,
+                title: $('.chat-history[data-conversation-id="' + currentConversationId + '"] .chat-title').text(),
+                messages: messages
+            })
+        }).fail(function(error) {
+            console.error('Error saving conversation:', error);
+        });
+    }
+
+    // Load conversation messages
+    function loadConversation(conversationId) {
+        if (currentConversationId === conversationId) return; // Don't reload if already selected
+        
+        $.get('/get_conversation/' + conversationId)
+            .done(function(conversation) {
+                clearChat();
+                currentConversationId = conversation.id;
+                
+                // Highlight the selected conversation
+                $('.chat-history').removeClass('active');
+                $('.chat-history[data-conversation-id="' + conversationId + '"]').addClass('active');
+                
+                if (conversation.messages && conversation.messages.length > 0) {
+                    $('#chat-messages').empty(); // Clear the welcome message
+                    conversation.messages.forEach(function(msg) {
+                        addMessage(msg.content, msg.isUser);
+                    });
+                }
+            })
+            .fail(function(error) {
+                console.error('Error loading conversation:', error);
+                clearChat();
+            });
+    }
+
+    // Function to update conversation title in database
+    function updateConversationTitle(conversationId, newTitle) {
+        if (!conversationId) return;
+
+        $.ajax({
+            url: '/save_conversation',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                id: conversationId,
+                title: newTitle
+            })
+        }).fail(function(error) {
+            console.error('Error updating conversation title:', error);
+        });
     }
 
     // Handle new chat button click
     $('#new-chat-btn').click(function() {
-        clearChat();
-        // Add the new chat to history
-        const newChatHistory = createChatHistoryItem('New Chat');
-        // Insert after the sidebar header
-        newChatHistory.insertAfter('.sidebar-header');
+        $.ajax({
+            url: '/save_conversation',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                title: 'New Conversation'
+            })
+        })
+        .done(function(response) {
+            currentConversationId = response.id;
+            loadConversations();
+            clearChat();
+        })
+        .fail(function(error) {
+            console.error('Error creating new conversation:', error);
+        });
     });
+
+    // Handle chat history item click
+    $(document).on('click', '.chat-history', function(e) {
+        if (!$(e.target).closest('.chat-actions').length) {
+            const conversationId = $(this).attr('data-conversation-id');
+            if (conversationId) {
+                // Remove active class from all conversations
+                $('.chat-history').removeClass('active');
+                // Add active class to clicked conversation
+                $(this).addClass('active');
+                loadConversation(conversationId);
+            }
+        }
+    });
+
+    // Handle delete chat button click
+    $(document).on('click', '.delete-chat-btn', function(e) {
+        e.stopPropagation();
+        const chatItem = $(this).closest('.chat-history');
+        const conversationId = chatItem.attr('data-conversation-id');
+
+        if (conversationId) {
+            $.ajax({
+                url: '/delete_conversation/' + conversationId,
+                method: 'DELETE'
+            })
+            .done(function() {
+                chatItem.fadeOut(200, function() {
+                    $(this).remove();
+                    if (conversationId === currentConversationId) {
+                        clearChat();
+                        currentConversationId = null;
+                    }
+                    // If no conversations left, load conversations to get the default one
+                    if ($('.chat-history').length === 0) {
+                        loadConversations();
+                    }
+                });
+            })
+            .fail(function(error) {
+                console.error('Error deleting conversation:', error);
+            });
+        }
+    });
+
+    // Save conversation after each message
+    const originalAddMessage = addMessage;
+    addMessage = function(message, isUser = false, imageUrl = null) {
+        originalAddMessage(message, isUser, imageUrl);
+        if (currentConversationId) {
+            saveCurrentConversation();
+        }
+    };
+
+    // Save conversation periodically
+    setInterval(saveCurrentConversation, 30000);
 
     // Handle edit button click (for dynamically added elements)
     $(document).on('click', '.edit-title-btn', function(e) {
         e.stopPropagation();
         const chatHistoryItem = $(this).closest('.chat-history');
         makeEditable(chatHistoryItem);
-    });
-
-    // Handle delete button click
-    $(document).on('click', '.delete-chat-btn', function(e) {
-        e.stopPropagation();
-        const chatHistoryItem = $(this).closest('.chat-history');
-        
-        // Add fade out animation before removing
-        chatHistoryItem.animate({
-            opacity: 0,
-            height: 0,
-            marginBottom: 0,
-            padding: 0
-        }, 200, function() {
-            $(this).remove();
-        });
     });
 
     // Update existing chat history items to have edit and delete buttons
@@ -183,49 +339,45 @@ $(document).ready(function() {
     // Add initial bot message
     addMessage("Hello! I'm your diabetes management assistant. How can I help you today?", false);
 
-    // Handle form submission
-    chatForm.on('submit', function (e) {
+    // Handle chat form submission
+    chatForm.submit(function(e) {
         e.preventDefault();
-        const message = userInput.val().trim();
+        const userMessage = userInput.val().trim();
         const imageFile = imageInput[0].files[0];
-    
-        if (message || imageFile) {
-            // Clear inputs immediately
-            userInput.val('');
-            const imageUrl = $('.image-preview').attr('src');
-            $('#image-input').val(''); // Clear image input
-            $('.image-preview').attr('src', ''); // Reset preview
-            $('.image-preview-container').hide(); // Hide preview container
-    
-            // Add user message with optional image
-            if (message || imageUrl) {
-                addMessage(message, true, imageUrl);
-            }
-    
-            // Prepare form data
-            const formData = new FormData();
-            if (message) formData.append('message', message);
-            if (imageFile) formData.append('image', imageFile);
-    
-            // Show typing indicator immediately for bot response
-            $.ajax({
-                url: '/chat',
-                method: 'POST',
-                processData: false,
-                contentType: false,
-                data: formData,
-                success: function (response) {
-                    // Add bot response
-                    addMessage(response.response, false);
-                },
-                error: function (error) {
-                    console.error('Error:', error);
-                    addMessage('Sorry, there was an error processing your request.', false);
-                }
-            });
+        
+        if (!userMessage && !imageFile) return;
+
+        // Add user message to chat
+        addMessage(userMessage, true);
+        userInput.val('');
+        imageInput.val('');
+        $('#selected-image-preview').empty();
+
+        const formData = new FormData();
+        formData.append('message', userMessage);
+        if (imageFile) {
+            formData.append('image', imageFile);
         }
+
+        // Send message to server
+        $.ajax({
+            url: '/chat',
+            method: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                if (response.response) {
+                    addMessage(response.response, false);
+                    saveCurrentConversation(); // Save after bot response
+                }
+            },
+            error: function(error) {
+                console.error('Error:', error);
+                addMessage('Sorry, there was an error processing your message.', false);
+            }
+        });
     });
-    
 
     // Image upload handling
     $('#image-input').change(function(e) {

@@ -78,18 +78,19 @@
 
 .chat-history {
     padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 8px;
+    margin: 5px 0;
     cursor: pointer;
-    transition: all 0.2s ease;
     display: flex;
     align-items: center;
-    gap: 10px;
-    position: relative;
+    transition: background-color 0.3s ease;
 }
 
 .chat-history:hover {
-    background: #e9ecef;
+    background-color: #f0f0f0;
+}
+
+.chat-history.active {
+    background-color: #e0e0e0;
 }
 
 .chat-history i {

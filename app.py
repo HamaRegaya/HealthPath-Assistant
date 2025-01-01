@@ -108,68 +108,36 @@ def login():
     return render_template('login.html', notification=notification, notification_type=notification_type)
 
 
-@app.route('/chat', methods=['POST'])
+@app.route('/chat', methods=['GET', 'POST'])
 @login_required
 def chat():
-    # Get inputs from the form
-    message = request.form.get('message', '').strip()
-    image = request.files.get('image')
-    conversation_name = request.form.get('conversation_name', 'Default Conversation').strip()
+    if request.method == 'POST':
+        message = request.form.get('message', '').strip()
+        image = request.files.get('image')
 
-    if not message and not image:
-        return jsonify({'response': 'No input provided'}), 400
+        if not message and not image:
+            return jsonify({'response': 'No input provided'}), 400
 
-    # Prepare the input for GPT-4 multimodal
-    gpt_input = []
+        gpt_input = []
 
-    if message:
-        gpt_input.append({"type": "text", "text": message})
+        if message:
+            gpt_input.append({"type": "text", "text": message})
 
-    if image:
-        image_data = base64.b64encode(image.read()).decode("utf-8")
-        gpt_input.append({
-            "type": "image_url",
-            "image_url": {"url": f"data:image/jpeg;base64,{image_data}"}
-        })
+        if image:
+            image_data = base64.b64encode(image.read()).decode("utf-8")
+            gpt_input.append({
+                "type": "image_url",
+                "image_url": {"url": f"data:image/jpeg;base64,{image_data}"}
+            })
 
-    # Create a human message for GPT-4 multimodal
-    from langchain.schema import HumanMessage
-    human_message = HumanMessage(content=gpt_input)
+        from langchain.schema import HumanMessage
+        human_message = HumanMessage(content=gpt_input)
 
-    # Get the response from GPT-4 multimodal
-    response = llm.invoke([human_message])
+        response = llm.invoke([human_message])
 
-    # Save conversation to MongoDB
-    user_id = str(current_user.id)
-    conversation_data = {
-        'user_message': message,
-        'assistant_response': response.content,
-        'timestamp': datetime.datetime.now(datetime.timezone.utc),
-    }
+        return jsonify({'response': response.content})
 
-    # Find the conversation by name and user_id
-    conversation = mongo.db.conversations.find_one({'user_id': user_id, 'name': conversation_name})
-
-    if conversation:
-        # Update the existing conversation by appending the new message
-        mongo.db.conversations.update_one(
-            {'_id': conversation['_id']},
-            {'$push': {'messages': conversation_data}}
-        )
-    else:
-        # Create a new conversation
-        new_conversation = {
-            'user_id': user_id,
-            'name': conversation_name,
-            'messages': [conversation_data],
-            'created_at': datetime.datetime.now(datetime.timezone.utc)
-        }
-        mongo.db.conversations.insert_one(new_conversation)
-
-    return jsonify({'response': response.content})
-
-    # Save the conversation to MongoDB
-    
+    return render_template('chatbot.html')
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -232,6 +200,93 @@ def logout():
     logout_user()
     flash('You have been logged out', 'info')
     return redirect(url_for('login'))
+
+@app.route('/get_conversations')
+@login_required
+def get_conversations():
+    user_conversations = list(mongo.db.conversations.find({'user_id': str(current_user.id)}))
+    conversations_list = []
+    
+    for conv in user_conversations:
+        conversations_list.append({
+            'id': str(conv['_id']),
+            'title': conv.get('title', 'New Conversation'),
+            'timestamp': conv.get('timestamp', datetime.datetime.now()).isoformat()
+        })
+    
+    if not conversations_list:
+        new_conv = {
+            'user_id': str(current_user.id),
+            'title': 'New Conversation',
+            'messages': [],
+            'timestamp': datetime.datetime.now()
+        }
+        result = mongo.db.conversations.insert_one(new_conv)
+        conversations_list.append({
+            'id': str(result.inserted_id),
+            'title': new_conv['title'],
+            'timestamp': new_conv['timestamp'].isoformat()
+        })
+    
+    return jsonify(conversations_list)
+
+@app.route('/get_conversation/<conversation_id>')
+@login_required
+def get_conversation(conversation_id):
+    conversation = mongo.db.conversations.find_one({
+        '_id': ObjectId(conversation_id),
+        'user_id': str(current_user.id)
+    })
+    
+    if conversation:
+        return jsonify({
+            'id': str(conversation['_id']),
+            'title': conversation.get('title', 'New Conversation'),
+            'messages': conversation.get('messages', [])
+        })
+    return jsonify({'error': 'Conversation not found'}), 404
+
+@app.route('/save_conversation', methods=['POST'])
+@login_required
+def save_conversation():
+    data = request.json
+    conversation_id = data.get('id')
+    title = data.get('title', 'New Conversation')
+    messages = data.get('messages', [])
+    
+    if conversation_id:
+        # Update existing conversation
+        result = mongo.db.conversations.update_one(
+            {'_id': ObjectId(conversation_id), 'user_id': str(current_user.id)},
+            {'$set': {
+                'title': title,
+                'messages': messages,
+                'timestamp': datetime.datetime.now()
+            }}
+        )
+        if result.matched_count == 0:
+            return jsonify({'error': 'Conversation not found'}), 404
+    else:
+        # Create new conversation
+        conversation = {
+            'user_id': str(current_user.id),
+            'title': title,
+            'messages': messages,
+            'timestamp': datetime.datetime.now()
+        }
+        result = mongo.db.conversations.insert_one(conversation)
+        conversation_id = str(result.inserted_id)
+    
+    return jsonify({'success': True, 'id': conversation_id})
+
+@app.route('/delete_conversation/<conversation_id>', methods=['DELETE'])
+@login_required
+def delete_conversation(conversation_id):
+    result = mongo.db.conversations.delete_one({
+        '_id': ObjectId(conversation_id),
+        'user_id': str(current_user.id)
+    })
+    return jsonify({'success': True if result.deleted_count > 0 else False})
 
 if __name__ == '__main__':
     app.run(debug=True)

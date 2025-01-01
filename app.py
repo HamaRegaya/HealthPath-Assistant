@@ -15,7 +15,7 @@ from io import BytesIO
 from PIL import Image
 import httpx
 
-load_dotenv()
+load_dotenv(override=True)
 
 app = Flask(__name__)
 app.config['MONGO_URI'] = "mongodb+srv://hamaregaya:b0HtiYL8Ekk1co2q@healthpath.qhccv.mongodb.net/HealthPath?retryWrites=true&w=majority" # Change to your MongoDB connection string

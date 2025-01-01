@@ -337,7 +337,7 @@ $(document).ready(function() {
     });
 
     // Add initial bot message
-    addMessage("Hello! I'm your diabetes management assistant. How can I help you today?", false);
+    // addMessage("Hello! I'm your diabetes management assistant. How can I help you today?", false);
 
     // Handle chat form submission
     chatForm.submit(function(e) {

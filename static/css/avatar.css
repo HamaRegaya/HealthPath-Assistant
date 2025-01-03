@@ -50,7 +50,7 @@ body {
     align-items: center;
     justify-content: center;
     gap: 10px;
-    width: 100%;
+    width: 25%;
     max-width: 729px;
     padding: 15px;
     background: rgba(255, 255, 255, 0.1);

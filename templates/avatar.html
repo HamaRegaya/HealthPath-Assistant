@@ -221,8 +221,31 @@
         }
 		</style>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/avatar.css') }}">
-	<script src="https://aka.ms/csspeech/jsbrowserpackageraw"></script>
-    </head>
+    <script>
+        async function loadConfig() {
+            try {
+                const response = await fetch('/config');
+                const config = await response.json();
+                
+                // Update form fields with environment variables
+                document.getElementById('region').value = config.AZURE_SPEECH_REGION;
+                document.getElementById('APIKey').value = config.AZURE_SPEECH_API_KEY;
+                document.getElementById('azureOpenAIEndpoint').value = config.AZURE_OPENAI_ENDPOINT;
+                document.getElementById('azureOpenAIApiKey').value = config.AZURE_OPENAI_API_KEY;
+                document.getElementById('azureOpenAIDeploymentName').value = config.AZURE_OPENAI_DEPLOYMENT_NAME;
+                document.getElementById('sttLocales').value = config.STT_LOCALES;
+                document.getElementById('ttsVoice').value = config.TTS_VOICE;
+                document.getElementById('talkingAvatarCharacter').value = config.AVATAR_CHARACTER;
+                document.getElementById('talkingAvatarStyle').value = config.AVATAR_STYLE;
+            } catch (error) {
+                console.error('Error loading configuration:', error);
+            }
+        }
+        
+        // Load config when page loads
+        document.addEventListener('DOMContentLoaded', loadConfig);
+        </script>
+</head>
     <body>
 		<header class="header" >
 			<!-- Topbar -->
@@ -363,7 +386,7 @@
     Added hidden="hidden" so that the configuration is never visible
 -->
 <div id="configuration" hidden="hidden">
-  <h2 style="background-color: white; width: 300px;">Azure Speech Resource</h2>
+    <h2 style="background-color: white; width: 300px;">Azure Speech Resource</h2>
   <label style="font-size: medium;" for="region">Region:</label>
   <select id="region" style="font-size: medium;">
     <option value="westus2">West US 2</option>
@@ -375,7 +398,9 @@
     <option value="eastus2">East US 2</option>
   </select>
   <label style="font-size: medium;" for="APIKey">API Key:</label>
-  <input id="APIKey" value="7e90f15f354e4e25b3f8dffd72a25a89" type="password" size="32" style="font-size: medium;" />
+  <input id="APIKey" type="password" size="32" style="font-size: medium;" placeholder="Enter API Key"/>
+
+
   <div style="background-color: white; width: 300px;">
     <input type="checkbox" id="enablePrivateEndpoint" onchange="window.updatePrivateEndpoint()">Enable Private Endpoint</input><br />
   </div>
@@ -386,11 +411,11 @@
 
   <h2 style="background-color: white; width: 300px;">Azure OpenAI Resource</h2>
   <label style="font-size: medium;" for="azureOpenAIEndpoint">Endpoint:</label>
-  <input id="azureOpenAIEndpoint" value="https://healthpath2.openai.azure.com/" type="text" size="64" style="font-size: medium;"></input><br />
+  <input id="azureOpenAIEndpoint"  type="text" size="64" style="font-size: medium;"></input><br />
   <label style="font-size: medium;" for="azureOpenAIApiKey">API Key:</label>
-  <input id="azureOpenAIApiKey" value="9Vt69mDhSbZsXPbdh3ycDeULmXftY9qJoBNf5B7Tlle1G226lnwtJQQJ99ALACYeBjFXJ3w3AAABACOGWzfl" type="password" size="32" style="font-size: medium;" /><br />
+  <input id="azureOpenAIApiKey"  type="password" size="32" style="font-size: medium;" /><br />
   <label style="font-size: medium;" for="azureOpenAIDeploymentName">Deployment Name:</label>
-  <input id="azureOpenAIDeploymentName" value="gpt-4o" type="text" size="32" style="font-size: medium;" /><br />
+  <input id="azureOpenAIDeploymentName"  type="text" size="32" style="font-size: medium;" /><br />
   <label style="font-size: medium;" for="prompt">System Prompt:</label><br/>
   <textarea id="prompt" style="width: 640px;">
 	Here’s a prompt you can use for your chatbot designed to help people with diabetes. This prompt is intended to provide personalized advice, answer questions, and guide users in managing their condition:
@@ -457,37 +482,42 @@
   <br />
 </div>
 
-<!-- This button is visible by default, with no config in the way -->
-<!-- Replace the current button section with this -->
-<div class="button-container">
-    <button id="startSession" onclick="window.startSession()">Open Avatar</button>
-    <button id="microphone" onclick="window.microphone()" disabled>Start Mic</button>
-    <button id="stopSpeaking" onclick="stopSpeaking()" disabled>Stop</button>
-    <button id="clearChatHistory" onclick="window.clearChatHistory()">Clear Chat</button>
-    <button id="stopSession" onclick="window.stopSession()" disabled>Close Avatar</button>
+<div class="avatar-controls">
+    <div class="button-container">
+        <button id="startSession" onclick="window.startSession()">Open Avatar</button>
+        <button id="microphone" onclick="window.microphone()" disabled>Start Mic</button>
+        <button id="stopSpeaking" onclick="stopSpeaking()" disabled>Stop</button>
+        <button id="stopSession" onclick="window.stopSession()" disabled>Close Avatar</button>
+        <button id="clearChatHistory" onclick="window.clearChatHistory()">Clear Chat</button>
+    </div>
+
+    <div id="videoContainer" style="position: relative; width: 960px;">
+        <div id="overlayArea" style="position: absolute;   visibility: hidden;">
+            <div id="chatHistory"
+                style="width: 360px; height: 500px; font-size: medium; border: none; resize: none; background-color: transparent; overflow: hidden;"
+                contentEditable="true" hidden></div>
+        </div>
+        <div id="localVideo" hidden>
+            <video src="{{ url_for('static', filename='video/lisa-casual-sitting-idle.mp4') }}" autoplay loop muted></video>
+        </div>
+        <div id="remoteVideo"></div>
+    </div>
+
+    <div style="margin-top: 5px;">
+        <div id="showTypeMessage" style="display: none;">
+            <input type="checkbox" id="showTypeMessageCheckbox" onchange="updateTypeMessageBox()">
+            <label for="showTypeMessageCheckbox">Show message before speaking</label>
+        </div>
+        <div id="userMessageBox"
+            style="width: 940px; min-height: 150px; max-height: 200px; border: 1px solid; overflow-y: scroll; padding: 10px;"
+            hidden contentEditable="true"></div>
+        <div>
+            <img id="uploadImgIcon" src="{{ url_for('static', filename='img/attachment.jpg') }}" 
+                alt="Upload Attachment" style="cursor: pointer; width: 24px; height: 24px; margin: 10px;" hidden />
+        </div>
+    </div>
 </div>
 
-<div id="videoContainer" style="position: relative; width: 960px;">
-  <div id="overlayArea" style="position: absolute;">
-    <div id="chatHistory"
-         style="width: 360px; height: 500px; font-size: medium; border: none; resize: none; background-color: transparent; overflow: hidden;"
-         contentEditable="true" hidden></div>
-    </div>
-    <div id="localVideo" hidden>
-      <video src="video/lisa-casual-sitting-idle.mp4" autoplay loop muted></video>
-    </div>
-    <div id="remoteVideo"></div>
-  </div>
-  <div margin-top="5px">
-    <div id="showTypeMessageCheckbox">
-    </div>
-    <div id="userMessageBox"
-      style="width: 940px; min-height: 150px; max-height: 200px; border: 1px solid ; overflow-y: scroll; padding: 10px;"
-      hidden type="text" contentEditable="true"></div>
-  </div>
-  <div>
-    <img id="uploadImgIcon" src="./image/attachment.jpg" alt="Button" style="cursor: pointer;" hidden />
-  </div>
 			</div>
 	
 			<div class="right-panel" style="margin-left: 17%;width: 95%;">
@@ -518,49 +548,17 @@
 			</div>
 		</div>
 		
-		<!-- jquery Min JS -->
-        <script data-cfasync="false" src="../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="js/jquery.min.js"></script>
-		<!-- jquery Migrate JS -->
-		<script src="js/jquery-migrate-3.0.0.js"></script>
-		<!-- jquery Ui JS -->
-		<script src="js/jquery-ui.min.js"></script>
-		<!-- Easing JS -->
-        <script src="js/easing.js"></script>
-		<!-- Color JS -->
-		<script src="js/colors.js"></script>
-		<!-- Popper JS -->
-		<script src="js/popper.min.js"></script>
-		<!-- Bootstrap Datepicker JS -->
-		<script src="js/bootstrap-datepicker.js"></script>
-		<!-- Jquery Nav JS -->
-        <script src="js/jquery.nav.js"></script>
-		<!-- Slicknav JS -->
-		<script src="js/slicknav.min.js"></script>
-		<!-- ScrollUp JS -->
-        <script src="js/jquery.scrollUp.min.js"></script>
-		<!-- Niceselect JS -->
-		<script src="js/niceselect.js"></script>
-		<!-- Tilt Jquery JS -->
-		<script src="js/tilt.jquery.min.js"></script>
-		<!-- Owl Carousel JS -->
-        <script src="js/owl-carousel.js"></script>
-		<!-- counterup JS -->
-		<script src="js/jquery.counterup.min.js"></script>
-		<!-- Steller JS -->
-		<script src="js/steller.js"></script>
-		<!-- Wow JS -->
-		<script src="js/wow.min.js"></script>
-		<!-- Magnific Popup JS -->
-		<script src="js/jquery.magnific-popup.min.js"></script>
-		<!-- Counter Up CDN JS -->
-		<script src="../../../cdnjs.cloudflare.com/ajax/libs/waypoints/2.0.3/waypoints.min.js"></script>
-		<!-- Bootstrap JS -->
-		<script src="js/bootstrap.min.js"></script>
-		<!-- Main JS -->
-		<script src="js/main.js"></script>
-    <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'8e4fd819ebffddc0',t:'MTczMjAxNTU3NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='../../cdn-cgi/challenge-platform/h/b/scripts/jsd/22755d9a86c9/maind41d.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+		<!-- Microsoft Speech SDK -->
+    <script src="https://aka.ms/csspeech/jsbrowserpackageraw"></script>
+    
+    <!-- jQuery first, then other dependencies -->
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    
+    <!-- Avatar JS -->
     <script src="{{ url_for('static', filename='js/avatar.js') }}"></script>
-
+    
+   
 </body>
 
 <!-- Mirrored from wpthemesgrid.com/themes/medikit/index2.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 19 Nov 2024 11:26:54 GMT -->

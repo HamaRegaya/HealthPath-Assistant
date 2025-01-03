@@ -19,11 +19,11 @@ instance/
 venv/
 ENV/
 .venv/
-
+templates/.env
 # Logs
 *.log
 logs/
-
+.env
 # Coverage reports
 htmlcov/
 .coverage

@@ -116,7 +116,24 @@ def about():
 @app.route('/chart')
 def chart():
     return render_template('chart-and-report.html')
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
+
+@app.route('/config')
+def get_config():
+    return {
+        'AZURE_SPEECH_REGION': os.getenv('AZURE_SPEECH_REGION'),
+        'AZURE_SPEECH_API_KEY': os.getenv('AZURE_SPEECH_API_KEY'),
+        'AZURE_OPENAI_ENDPOINT': os.getenv('AZURE_OPENAI_ENDPOINT'),
+        'AZURE_OPENAI_API_KEY': os.getenv('AZURE_OPENAI_API_KEY'),
+        'AZURE_OPENAI_DEPLOYMENT_NAME': os.getenv('AZURE_OPENAI_DEPLOYMENT_NAME'),
+        'STT_LOCALES': os.getenv('STT_LOCALES'),
+        'TTS_VOICE': os.getenv('TTS_VOICE'),
+        'AVATAR_CHARACTER': os.getenv('AVATAR_CHARACTER'),
+        'AVATAR_STYLE': os.getenv('AVATAR_STYLE')
+    }
 @app.route('/chatbot')
 def chatbot():
     return render_template('chatbot.html')

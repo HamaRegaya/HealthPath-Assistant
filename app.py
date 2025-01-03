@@ -180,7 +180,9 @@ def register():
         return render_template('404.html', notification="An error occurred. Please try again.", notification_type="error")
 
 
-
+@app.route('/avatar')
+def avatar():
+    return render_template('avatar.html')
 @app.route('/about')
 def about():
     return render_template('about.html')
@@ -278,7 +280,24 @@ def save_conversation():
         conversation_id = str(result.inserted_id)
     
     return jsonify({'success': True, 'id': conversation_id})
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
+
+@app.route('/config')
+def get_config():
+    return {
+        'AZURE_SPEECH_REGION': os.getenv('AZURE_SPEECH_REGION'),
+        'AZURE_SPEECH_API_KEY': os.getenv('AZURE_SPEECH_API_KEY'),
+        'AZURE_OPENAI_ENDPOINT': os.getenv('AZURE_OPENAI_ENDPOINT'),
+        'AZURE_OPENAI_API_KEY': os.getenv('AZURE_OPENAI_API_KEY'),
+        'AZURE_OPENAI_DEPLOYMENT_NAME': os.getenv('AZURE_OPENAI_DEPLOYMENT_NAME'),
+        'STT_LOCALES': os.getenv('STT_LOCALES'),
+        'TTS_VOICE': os.getenv('TTS_VOICE'),
+        'AVATAR_CHARACTER': os.getenv('AVATAR_CHARACTER'),
+        'AVATAR_STYLE': os.getenv('AVATAR_STYLE')
+    }
 @app.route('/delete_conversation/<conversation_id>', methods=['DELETE'])
 @login_required
 def delete_conversation(conversation_id):

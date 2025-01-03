@@ -3,60 +3,37 @@
     
 <!-- Mirrored from wpthemesgrid.com/themes/medikit/index2.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 19 Nov 2024 11:26:54 GMT -->
 <head>
-        <!-- Meta Tags -->
-		<meta charset="utf-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta name="keywords" content="Site keywords here">
-		<meta name="description" content="">
-		<meta name='copyright' content=''>
-		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-		
-		<!-- Title -->
-        <title>Medikit - Medical and Doctor HTML Template.</title>
-		
-		<!-- Favicon -->
-        <link rel="icon" href="img/favicon.png">
-		
-		<!-- Google Fonts -->
-		<link href="https://fonts.googleapis.com/css?family=Poppins:200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i&amp;display=swap" rel="stylesheet">
+       <!-- Meta Tags -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+    <!-- Title -->
+    <title>Chatbot - Diabetes Assistant</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="{{ url_for('static', filename='img/favicon.png') }}">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i&display=swap" rel="stylesheet">
 
-		<!-- Bootstrap CSS -->
-		<link rel="stylesheet" href="css/bootstrap.min.css">
-		<!-- Nice Select CSS -->
-		<link rel="stylesheet" href="css/nice-select.css">
-		<!-- Font Awesome CSS -->
-        <link rel="stylesheet" href="css/font-awesome.min.css">
-		<!-- icofont CSS -->
-        <link rel="stylesheet" href="css/icofont.css">
-		<!-- Slicknav -->
-		<link rel="stylesheet" href="css/slicknav.min.css">
-		<!-- Owl Carousel CSS -->
-        <link rel="stylesheet" href="css/owl-carousel.css">
-		<!-- Datepicker CSS -->
-		<link rel="stylesheet" href="css/datepicker.css">
-		<!-- Animate CSS -->
-        <link rel="stylesheet" href="css/animate.min.css">
-		<!-- Magnific Popup CSS -->
-        <link rel="stylesheet" href="css/magnific-popup.css">
-		
-		<!-- Medipro CSS -->
-        <link rel="stylesheet" href="css/normalize.css">
-        <link rel="stylesheet" href="style.css">
-        <link rel="stylesheet" href="css/responsive.css">
-		
-		<!-- Color CSS -->
-		<link rel="stylesheet" href="css/color/color1.css">
-		<!--<link rel="stylesheet" href="css/color/color2.css">-->
-		<!--<link rel="stylesheet" href="css/color/color3.css">-->
-		<!--<link rel="stylesheet" href="css/color/color4.css">-->
-		<!--<link rel="stylesheet" href="css/color/color5.css">-->
-		<!--<link rel="stylesheet" href="css/color/color6.css">-->
-		<!--<link rel="stylesheet" href="css/color/color7.css">-->
-		<!--<link rel="stylesheet" href="css/color/color8.css">-->
-		<!--<link rel="stylesheet" href="css/color/color9.css">-->
-		<!--<link rel="stylesheet" href="css/color/color10.css">-->
-		<!--<link rel="stylesheet" href="css/color/color11.css">-->
-		<!--<link rel="stylesheet" href="css/color/color12.css">-->
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/font-awesome.min.css') }}">
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <!-- icofont CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/icofont.css') }}">
+    <!-- Slicknav -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/slicknav.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/icofont.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/datepicker.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animate.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/magnific-popup.css') }}">
+        <!-- Medipro CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}">
 
 		<link rel="stylesheet" href="#" id="colors">
 		<style>
@@ -68,86 +45,160 @@
         }
 
         body {
-            background-color: #1e3a8a;
-            min-height: 100vh;
-            padding: 20px;
-            color: white;
+			background: #ffffff;
+    min-height: 100vh;
+    padding: 20px;
+    color: #333;
+    font-family: 'Poppins', sans-serif;
         }
 
         .top-stats {
-		background: rgba(255, 255, 255, 0.1);
-		padding: 10px 20px;
-		border-radius: 15px;
-		display: flex;
-		justify-content: center;
-		gap: 42px;
-		margin: 28px auto;
-		width: fit-content;
-	}
+			background: #f8f9fa;
+    backdrop-filter: none;
+    padding: 15px 30px;
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+    margin: 30px auto;
+    width: fit-content;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
 
         .stat-item {
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 10px;
+            font-size: 1.1em;
+            font-weight: 500;
+        }
+
+        .stat-item svg {
+            width: 20px;
+            height: 20px;
         }
 
         .dashboard {
             display: grid;
-            grid-template-columns: 1fr 350px 1fr;
-            gap: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding-top: 40px;
+    grid-template-columns: 1fr 508px 1fr;
+    gap: 57px;
+    max-width: 1307px;
+    margin: 0 auto;
+    margin-top: -83px;
         }
 
         .section {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 20px;
+			background: #ffffff;
+    backdrop-filter: none;
+    padding: 25px;
+    border-radius: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
         }
 
         .section h2 {
-            margin-bottom: 15px;
-            font-size: 1.2em;
-            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 20px;
+            font-size: 1.3em;
+			color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .medication-item, .activity-item, .appointment-item {
             display: flex;
             justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            align-items: center;
+            padding: 12px 15px;
+			background: #f8f9fa;
+            margin-bottom: 10px;
+            border-radius: 12px;
+            transition: background-color 0.3s ease;
+        }
+
+        .medication-item:hover, .activity-item:hover, .appointment-item:hover {
+			background: #f0f0f0;
         }
 
         .profile-section {
             text-align: center;
+            padding: 30px;
         }
 
         .profile-image {
-			width: 100%;
-			height: 73%;
-			border-radius: 50%;
-			margin: 0 auto;
-			border: 4px solid rgba(255, 255, 255, 0.2);
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            transition: transform 0.3s ease;
+        }
+
+        .profile-image:hover {
+            transform: scale(1.05);
         }
 
         .emergency-contacts {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 15px;
         }
 
         .contact-item {
-            padding: 8px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
             text-align: center;
+            transition: all 0.3s ease;
         }
 
-        @media (max-width: 1024px) {
+        .contact-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .button-container {
+    position: fixed;
+    bottom: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    max-width: 729px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(8px);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+        .button-container button:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 1200px) {
             .dashboard {
                 grid-template-columns: 1fr 1fr;
+                padding: 20px;
             }
             .profile-section {
                 grid-column: 1 / -1;
@@ -161,28 +212,120 @@
             .top-stats {
                 flex-direction: column;
                 align-items: center;
+                padding: 20px;
+            }
+            .stat-item {
+                width: 100%;
+                justify-content: center;
             }
         }
-
 		</style>
-		
-    </head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/avatar.css') }}">
+    <script>
+        async function loadConfig() {
+            try {
+                const response = await fetch('/config');
+                const config = await response.json();
+                
+                // Update form fields with environment variables
+                document.getElementById('region').value = config.AZURE_SPEECH_REGION;
+                document.getElementById('APIKey').value = config.AZURE_SPEECH_API_KEY;
+                document.getElementById('azureOpenAIEndpoint').value = config.AZURE_OPENAI_ENDPOINT;
+                document.getElementById('azureOpenAIApiKey').value = config.AZURE_OPENAI_API_KEY;
+                document.getElementById('azureOpenAIDeploymentName').value = config.AZURE_OPENAI_DEPLOYMENT_NAME;
+                document.getElementById('sttLocales').value = config.STT_LOCALES;
+                document.getElementById('ttsVoice').value = config.TTS_VOICE;
+                document.getElementById('talkingAvatarCharacter').value = config.AVATAR_CHARACTER;
+                document.getElementById('talkingAvatarStyle').value = config.AVATAR_STYLE;
+            } catch (error) {
+                console.error('Error loading configuration:', error);
+            }
+        }
+        
+        // Load config when page loads
+        document.addEventListener('DOMContentLoaded', loadConfig);
+        </script>
+</head>
     <body>
-	
-		<!-- Preloader -->
-        <div class="preloader">
-            <div class="loader">
-                <div class="loader-outter"></div>
-                <div class="loader-inner"></div>
-
-                <div class="indicator"> 
-                    <svg width="16px" height="12px">
-                        <polyline id="back" points="1 6 4 6 6 11 10 1 12 6 15 6"></polyline>
-                        <polyline id="front" points="1 6 4 6 6 11 10 1 12 6 15 6"></polyline>
-                    </svg>
-                </div>
-            </div>
-        </div>
+		<header class="header" >
+			<!-- Topbar -->
+			<!-- End Topbar -->
+			<!-- Header Inner -->
+			<div class="header-inner">
+				<div class="container">
+					<div class="inner">
+						<div class="row">
+							<div class="col-lg-3 col-md-3 col-12">
+								<!-- Start Logo -->
+								<div class="logo">
+									<a href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='img/logo2.png') }}" alt="#"></a>
+								</div>
+								<!-- End Logo -->
+								<!-- Mobile Nav -->
+								<div class="mobile-nav"></div>
+								<!-- End Mobile Nav -->
+							</div>
+							<div class="col-lg-7 col-md-9 col-12">
+								<!-- Main Menu -->
+								<div class="main-menu">
+									<nav class="navigation">
+										<ul class="nav menu">
+											<li class="active"><a href="#">Home <i class="icofont-rounded-down"></i></a>
+												<ul class="dropdown">
+													<li><a href="index.html">Default Homepage</a></li>
+													<li><a href="index2.html">Animation Homepage</a></li>
+												</ul>
+											</li>
+											<li><a href="#">Doctos <i class="icofont-rounded-down"></i></a>
+												<ul class="dropdown">
+													<li><a href="doctors.html">Doctor</a></li>
+													<li><a href="doctor-details.html">Doctor Details</a></li>
+												</ul>
+											</li>
+											<li><a href="#">Services <i class="icofont-rounded-down"></i></a>
+												<ul class="dropdown">
+													<li><a href="service.html">Service</a></li>
+													<li><a href="service-details.html">Service Details</a></li>
+												</ul>
+											</li>
+											<li><a href="#">Pages <i class="icofont-rounded-down"></i></a>
+												<ul class="dropdown">
+													<li><a href="about.html">About Us</a></li>
+													<li><a href="appointment.html">Appointment</a></li>
+													<li><a href="time-table.html">Time Table</a></li>
+													<li><a href="testimonials.html">Testimonials</a></li>
+													<li><a href="pricing.html">Our Pricing</a></li>
+													<li><a href="register.html">Sign Up</a></li>
+													<li><a href="login.html">Login</a></li>
+													<li><a href="faq.html">Faq</a></li>
+													<li><a href="mail-success.html">Mail Success</a></li>
+													<li><a href="404.html">404 Error</a></li>
+												</ul>
+											</li>
+											<li><a href="#">Blogs <i class="icofont-rounded-down"></i></a>
+												<ul class="dropdown">
+													<li><a href="blog-grid.html">Blog Grid</a></li>
+													<li><a href="blog-single.html">Blog Details</a></li>
+												</ul>
+											</li>
+											<li><a href="contact.html">Contact Us</a></li>
+										</ul>
+									</nav>
+								</div>
+								<!--/ End Main Menu -->
+							</div>
+							<div class="col-lg-2 col-12">
+								<div class="get-quote">
+									<a href="appointment.html" class="btn">Appointment</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!--/ End Header Inner -->
+		</header>
+		
 		<div class="top-stats">
 			<div class="stat-item">
 				<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart w-5 h-5 text-red-400"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>
@@ -238,7 +381,143 @@
 			</div>
 	
 			<div class="profile-section">
-				<img src="img/about-img.jpg" alt="Profile" class="profile-image">
+
+<!--
+    Added hidden="hidden" so that the configuration is never visible
+-->
+<div id="configuration" hidden="hidden">
+    <h2 style="background-color: white; width: 300px;">Azure Speech Resource</h2>
+  <label style="font-size: medium;" for="region">Region:</label>
+  <select id="region" style="font-size: medium;">
+    <option value="westus2">West US 2</option>
+    <option value="westeurope">West Europe</option>
+    <option value="southeastasia">Southeast Asia</option>
+    <option value="southcentralus">South Central US</option>
+    <option value="northeurope">North Europe</option>
+    <option value="swedencentral">Sweden Central</option>
+    <option value="eastus2">East US 2</option>
+  </select>
+  <label style="font-size: medium;" for="APIKey">API Key:</label>
+  <input id="APIKey" type="password" size="32" style="font-size: medium;" placeholder="Enter API Key"/>
+
+
+  <div style="background-color: white; width: 300px;">
+    <input type="checkbox" id="enablePrivateEndpoint" onchange="window.updatePrivateEndpoint()">Enable Private Endpoint</input><br />
+  </div>
+  <div id="showPrivateEndpointCheckBox" hidden="hidden">
+    <label style="font-size: medium;" for="privateEndpoint">Private Endpoint:</label>
+    <input id="privateEndpoint" type="text" size="64" style="font-size: medium;" placeholder="https://{your custom name}.cognitiveservices.azure.com/"></input><br />
+  </div><br />
+
+  <h2 style="background-color: white; width: 300px;">Azure OpenAI Resource</h2>
+  <label style="font-size: medium;" for="azureOpenAIEndpoint">Endpoint:</label>
+  <input id="azureOpenAIEndpoint"  type="text" size="64" style="font-size: medium;"></input><br />
+  <label style="font-size: medium;" for="azureOpenAIApiKey">API Key:</label>
+  <input id="azureOpenAIApiKey"  type="password" size="32" style="font-size: medium;" /><br />
+  <label style="font-size: medium;" for="azureOpenAIDeploymentName">Deployment Name:</label>
+  <input id="azureOpenAIDeploymentName"  type="text" size="32" style="font-size: medium;" /><br />
+  <label style="font-size: medium;" for="prompt">System Prompt:</label><br/>
+  <textarea id="prompt" style="width: 640px;">
+	Here’s a prompt you can use for your chatbot designed to help people with diabetes. This prompt is intended to provide personalized advice, answer questions, and guide users in managing their condition:
+	
+	Prompt:
+	
+	You are a virtual assistant specializing in helping people with diabetes. You have expert knowledge in meal planning, exercise routines, medication management, and lifestyle tips to support diabetics in leading a healthy life. Your responses should be personalized and helpful, considering the user’s individual health needs. Always ensure that the advice is safe, reliable, and grounded in evidence-based practices. You will also provide motivational support for diabetes management.
+	
+	Example Interactions:
+	
+	User: "What can I eat for breakfast if I have diabetes?"
+	
+	AI: "For a diabetic-friendly breakfast, try whole grain toast with avocado and a boiled egg. It’s high in fiber and protein, which can help manage blood sugar levels. Avoid sugary cereals or pastries."
+	User: "How often should I check my blood sugar?"
+	
+	AI: "It’s essential to check your blood sugar levels regularly, but how often depends on your doctor’s recommendations. Typically, diabetics are advised to check their blood sugar at least 4 times a day if you’re managing it with insulin or medications."
+	User: "I’m feeling really tired today. What could be causing this?"
+	
+	AI: "Fatigue is common in people with diabetes and can be caused by several factors, including high or low blood sugar, poor sleep, or stress. It might be a good idea to check your blood sugar levels to see if that’s the cause. If you’re unsure, it’s always best to consult your healthcare provider."</textarea>
+  <div style="background-color: white; width: 300px;">
+    <input type="checkbox" id="enableOyd" onchange="window.updataEnableOyd()">Enable On Your Data</input><br />
+  </div>
+  <br />
+
+  <div id="cogSearchConfig" hidden="hidden">
+    <h2 style="background-color: white; width: 400px;">Azure Cognitive Search Resource</h2>
+    <label style="font-size: medium;" for="azureCogSearchEndpoint">Endpoint:</label>
+    <input id="azureCogSearchEndpoint" type="text" size="64" style="font-size: medium;"></input><br />
+    <label style="font-size: medium;" for="azureCogSearchApiKey">API Key:</label>
+    <input id="azureCogSearchApiKey" type="password" size="32" style="font-size: medium;" /><br />
+    <label style="font-size: medium;" for="azureCogSearchIndexName">Index Name:</label>
+    <input id="azureCogSearchIndexName" type="text" size="32" style="font-size: medium;" /><br />
+    <br />
+  </div>
+
+  <h2 style="background-color: white; width: 300px;">STT / TTS Configuration</h2>
+  <label style="font-size: medium;" for="sttLocale">STT Locale(s):</label>
+  <input id="sttLocales" type="text" size="64" style="font-size: medium;" value="en-US,de-DE,es-ES,fr-FR,it-IT,ja-JP,ko-KR,zh-CN"></input><br />
+  <label style="font-size: medium;" for="ttsVoice">TTS Voice:</label>
+  <input id="ttsVoice" type="text" size="32" style="font-size: medium;" value="en-US-AvaMultilingualNeural"></input><br />
+  <label style="font-size: medium;" for="customVoiceEndpointId">Custom Voice Deployment ID (Endpoint ID):</label>
+  <input id="customVoiceEndpointId" type="text" size="32" style="font-size: medium;" value=""></input><br />
+  <label style="font-size: medium;" for="personalVoiceSpeakerProfileID">Personal Voice Speaker Profile ID:</label>
+  <input id="personalVoiceSpeakerProfileID" type="text" size="32" style="font-size: medium;" value=""></input><br />
+  <div style="background-color: white; width: 300px;">
+    <input type="checkbox" id="continuousConversation">Continuous Conversation</input><br />
+  </div>
+  <br />
+
+  <h2 style="background-color: transparent; width: 300px;">Avatar Configuration</h2>
+  <label style="font-size: medium;" for="talkingAvatarCharacter">Avatar Character:</label>
+  <input id="talkingAvatarCharacter" type="text" size="16" style="font-size: medium;" value="lori"></input><br />
+  <label style="font-size: medium;" for="talkingAvatarStyle">Avatar Style:</label>
+  <input id="talkingAvatarStyle" type="text" size="16" style="font-size: medium;" value="graceful"></input><br />
+  <div style="background-color: transparent; width: 200px;">
+    <input type="checkbox" id="customizedAvatar">Custom Avatar</input><br />
+  </div>
+  <div style="background-color: transparent; width: 200px;">
+    <input type="checkbox" id="autoReconnectAvatar">Auto Reconnect</input><br />
+  </div>
+  <div style="background-color: transparent; width: 200px;">
+    <input type="checkbox" id="useLocalVideoForIdle" onchange="window.updateLocalVideoForIdle()">Use Local Video for Idle</input><br />
+  </div>
+  <br />
+</div>
+
+<div class="avatar-controls">
+    <div class="button-container">
+        <button id="startSession" onclick="window.startSession()">Open Avatar</button>
+        <button id="microphone" onclick="window.microphone()" disabled>Start Mic</button>
+        <button id="stopSpeaking" onclick="stopSpeaking()" disabled>Stop</button>
+        <!-- <button id="stopSession" onclick="window.stopSession()"  style="">Close Avatar</button>
+        <button id="clearChatHistory" onclick="window.clearChatHistory()">Clear Chat</button> -->
+    </div>
+
+    <div id="videoContainer" style="position: relative; width: 960px;">
+        <div id="overlayArea" style="position: absolute;   visibility: hidden;">
+            <div id="chatHistory"
+                style="width: 360px; height: 500px; font-size: medium; border: none; resize: none; background-color: transparent; overflow: hidden;"
+                contentEditable="true" hidden></div>
+        </div>
+        <div id="localVideo" hidden>
+            <video src="{{ url_for('static', filename='video/lisa-casual-sitting-idle.mp4') }}" autoplay loop muted></video>
+        </div>
+        <div id="remoteVideo"></div>
+    </div>
+
+    <div style="margin-top: 5px;">
+        <div id="showTypeMessage" style="display: none;">
+            <input type="checkbox" id="showTypeMessageCheckbox" onchange="updateTypeMessageBox()">
+            <label for="showTypeMessageCheckbox">Show message before speaking</label>
+        </div>
+        <div id="userMessageBox"
+            style="width: 940px; min-height: 150px; max-height: 200px; border: 1px solid; overflow-y: scroll; padding: 10px;"
+            hidden contentEditable="true"></div>
+        <div>
+            <img id="uploadImgIcon" src="{{ url_for('static', filename='img/attachment.jpg') }}" 
+                alt="Upload Attachment" style="cursor: pointer; width: 24px; height: 24px; margin: 10px;" hidden />
+        </div>
+    </div>
+</div>
+
 			</div>
 	
 			<div class="right-panel" style="margin-left: 17%;width: 95%;">
@@ -258,7 +537,7 @@
 	
 				<div class="section">
 					<h2>
-						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-phone w-5 h-5 text-red-400"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-phone w-5 h-5 text-red-400"><path d="M22 16.92v3a2 2 0 1 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
 						Emergency Contacts</h2>
 					<div class="emergency-contacts">
 						<div class="contact-item">Emergency Services</div>
@@ -269,47 +548,18 @@
 			</div>
 		</div>
 		
-		<!-- jquery Min JS -->
-        <script data-cfasync="false" src="../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="js/jquery.min.js"></script>
-		<!-- jquery Migrate JS -->
-		<script src="js/jquery-migrate-3.0.0.js"></script>
-		<!-- jquery Ui JS -->
-		<script src="js/jquery-ui.min.js"></script>
-		<!-- Easing JS -->
-        <script src="js/easing.js"></script>
-		<!-- Color JS -->
-		<script src="js/colors.js"></script>
-		<!-- Popper JS -->
-		<script src="js/popper.min.js"></script>
-		<!-- Bootstrap Datepicker JS -->
-		<script src="js/bootstrap-datepicker.js"></script>
-		<!-- Jquery Nav JS -->
-        <script src="js/jquery.nav.js"></script>
-		<!-- Slicknav JS -->
-		<script src="js/slicknav.min.js"></script>
-		<!-- ScrollUp JS -->
-        <script src="js/jquery.scrollUp.min.js"></script>
-		<!-- Niceselect JS -->
-		<script src="js/niceselect.js"></script>
-		<!-- Tilt Jquery JS -->
-		<script src="js/tilt.jquery.min.js"></script>
-		<!-- Owl Carousel JS -->
-        <script src="js/owl-carousel.js"></script>
-		<!-- counterup JS -->
-		<script src="js/jquery.counterup.min.js"></script>
-		<!-- Steller JS -->
-		<script src="js/steller.js"></script>
-		<!-- Wow JS -->
-		<script src="js/wow.min.js"></script>
-		<!-- Magnific Popup JS -->
-		<script src="js/jquery.magnific-popup.min.js"></script>
-		<!-- Counter Up CDN JS -->
-		<script src="../../../cdnjs.cloudflare.com/ajax/libs/waypoints/2.0.3/waypoints.min.js"></script>
-		<!-- Bootstrap JS -->
-		<script src="js/bootstrap.min.js"></script>
-		<!-- Main JS -->
-		<script src="js/main.js"></script>
-    <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'8e4fd819ebffddc0',t:'MTczMjAxNTU3NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='../../cdn-cgi/challenge-platform/h/b/scripts/jsd/22755d9a86c9/maind41d.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+		<!-- Microsoft Speech SDK -->
+    <script src="https://aka.ms/csspeech/jsbrowserpackageraw"></script>
+    
+    <!-- jQuery first, then other dependencies -->
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    
+    <!-- Avatar JS -->
+    <script src="{{ url_for('static', filename='js/avatar.js') }}"></script>
+    
+   
+</body>
 
 <!-- Mirrored from wpthemesgrid.com/themes/medikit/index2.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 19 Nov 2024 11:26:54 GMT -->
 </html>

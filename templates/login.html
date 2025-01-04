@@ -65,6 +65,23 @@
 		</div>
 		{% endif %}
 		<!-- End Notification -->
+
+		<!-- Flash Messages -->
+		{% with messages = get_flashed_messages(with_categories=true) %}
+		{% if messages %}
+		<div class="notification-container">
+			{% for category, message in messages %}
+			<div class="notification" data-type="{{ category }}">
+				<div class="notification-icon" data-type="{{ category }}">
+					<i class="fa"></i> <!-- Empty class to be updated dynamically -->
+				</div>
+				<div class="notification-message">{{ message }}</div>
+				<button class="notification-close">&times;</button>
+			</div>
+			{% endfor %}
+		</div>
+		{% endif %}
+		{% endwith %}
 	
 		<!-- Preloader -->
         <div class="preloader">

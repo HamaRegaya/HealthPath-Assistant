@@ -200,7 +200,7 @@ def chatbot():
 @login_required
 def logout():
     logout_user()
-    flash('You have been logged out', 'info')
+    flash('You have been logged out', 'success')  # 'success' is used for the CSS class
     return redirect(url_for('login'))
 
 @app.route('/get_conversations')

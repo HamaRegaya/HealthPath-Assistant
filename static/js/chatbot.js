@@ -91,46 +91,44 @@ $(document).ready(function() {
 
     // Function to add a message to the chat
     function addMessage(message, isUser = false, imageUrl = null) {
-        // Create the message container
-        const messageDiv = $('<div>')
-            .addClass('message')
-            .addClass(isUser ? 'message-user' : 'message-bot')
-            .addClass('message-hidden');
-    
-        if (!isUser) {
-            // Add typing indicator immediately
-            const typingIndicator = $('<div class="typing-indicator"><span></span><span></span><span></span></div>');
-            chatMessages.append(typingIndicator);
-            chatMessages.scrollTop(chatMessages[0].scrollHeight);
-    
-            // Start typing after a brief delay
-            setTimeout(() => {
-                typingIndicator.remove();
-                chatMessages.append(messageDiv);
-                messageDiv.removeClass('message-hidden');
-                typeMessage(messageDiv, message);
-                chatMessages.scrollTop(chatMessages[0].scrollHeight);
-            }, 500); // Reduced delay before typing starts
-        } else {
-            // If there's an image, append it above the message div
-            if (imageUrl) {
-                const imagePreview = $('<img>')
-                    .addClass('message-image-preview')
-                    .attr('src', imageUrl)
-                    .attr('alt', 'Uploaded image');
-                chatMessages.append(imagePreview); // Append the image directly to the chat container
-            }
-    
-            // Add the message
-            messageDiv.text(message);
-            chatMessages.append(messageDiv);
-    
-            // Reveal the message with animation
-            setTimeout(() => messageDiv.removeClass('message-hidden'), 50);
-            chatMessages.scrollTop(chatMessages[0].scrollHeight);
+        const messageDiv = $('<div>').addClass('message').addClass(isUser ? 'user-message' : 'assistant-message');
+        
+        // Create message content wrapper
+        const contentWrapper = $('<div>').addClass('message-content-wrapper');
+        
+        // Add avatar
+        const avatar = $('<div>').addClass('message-avatar');
+        avatar.html(`<i class="fa ${isUser ? 'fa-user' : 'fa-robot'}"></i>`);
+        contentWrapper.append(avatar);
+        
+        // Create message content
+        const contentDiv = $('<div>').addClass('message-content');
+        
+        // Add text content
+        if (message && message.trim() !== '') {
+            const textContent = $('<p>').text(message);
+            contentDiv.append(textContent);
         }
+        
+        // Add image if provided
+        if (imageUrl) {
+            const img = $('<img>').attr('src', imageUrl).addClass('message-image');
+            contentDiv.append(img);
+        }
+        
+        contentWrapper.append(contentDiv);
+        messageDiv.append(contentWrapper);
+        
+        // Add timestamp
+        const timestamp = $('<div>').addClass('message-timestamp').text(new Date().toLocaleTimeString());
+        messageDiv.append(timestamp);
+        
+        chatMessages.append(messageDiv);
+        chatMessages.scrollTop(chatMessages[0].scrollHeight);
+        
+        // Save conversation after adding message
+        saveCurrentConversation();
     }
-     
 
     // Function to clear chat messages
     function clearChat() {
@@ -169,28 +167,54 @@ $(document).ready(function() {
 
     // Save current conversation
     function saveCurrentConversation() {
-        if (!currentConversationId) return;
-
+        // Collect all messages from the chat
         const messages = [];
-        $('.chat-message').each(function() {
-            messages.push({
-                content: $(this).find('.message-content').html(),
-                isUser: $(this).hasClass('user-message')
-            });
+        $('#chat-messages .message').each(function() {
+            const isUser = $(this).hasClass('user-message');
+            const messageContent = $(this).find('.message-content p').text().trim();
+            const imageUrl = $(this).find('.message-image').attr('src');
+            
+            // Only add message if there's content or an image
+            if (messageContent || imageUrl) {
+                const messageObj = {
+                    role: isUser ? 'user' : 'assistant',
+                    content: messageContent || ''
+                };
+                
+                if (imageUrl) {
+                    messageObj.image = imageUrl;
+                }
+                
+                messages.push(messageObj);
+            }
         });
 
-        $.ajax({
-            url: '/save_conversation',
-            method: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({
+        // Only save if there are messages
+        if (messages.length > 0) {
+            // Prepare conversation data
+            const conversationData = {
                 id: currentConversationId,
-                title: $('.chat-history[data-conversation-id="' + currentConversationId + '"] .chat-title').text(),
+                title: $('.chat-title').first().text() || 'New Conversation',
                 messages: messages
-            })
-        }).fail(function(error) {
-            console.error('Error saving conversation:', error);
-        });
+            };
+
+            // Send to server
+            $.ajax({
+                url: '/save_conversation',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(conversationData),
+                success: function(response) {
+                    if (response.id && !currentConversationId) {
+                        currentConversationId = response.id;
+                        loadConversations(); // Refresh the conversation list
+                    }
+                },
+                error: function(error) {
+                    console.error('Error saving conversation:', error);
+                }
+            });
+        }
     }
 
     // Load conversation messages
@@ -340,61 +364,51 @@ $(document).ready(function() {
     // addMessage("Hello! I'm your diabetes management assistant. How can I help you today?", false);
 
     // Handle chat form submission
-    chatForm.submit(function(e) {
+    chatForm.on('submit', function(e) {
         e.preventDefault();
         const message = userInput.val().trim();
         const imageFile = imageInput[0].files[0];
-        
-        if (!message && !imageFile) {
-            return;
-        }
 
-        // Clear input
-        userInput.val('');
-        
-        // Create FormData object
-        const formData = new FormData();
-        if (message) {
-            formData.append('message', message);
-        }
-        if (imageFile) {
-            formData.append('image', imageFile);
-        }
+        if (!message && !imageFile) return;
 
-        // Add user message to chat
         if (imageFile) {
             const reader = new FileReader();
             reader.onload = function(e) {
-                addMessage(message || '', true, e.target.result);
-            }
+                const imageUrl = e.target.result;
+                addMessage(message, true, imageUrl);
+                // Clear the image input
+                imageInput.val('');
+                
+                // Save conversation after adding the message
+                saveCurrentConversation();
+            };
             reader.readAsDataURL(imageFile);
         } else if (message) {
             addMessage(message, true);
-        }
-
-        // Clear image preview
-        $('.image-preview').attr('src', '');
-        $('.image-preview-container').hide();
-        $('#image-input').val('');
-
-        // Send to server
-        $.ajax({
-            url: '/chat',
-            type: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function(response) {
-                if (response.response) {
+            
+            // Make the API call
+            $.ajax({
+                url: '/chat',
+                method: 'POST',
+                data: {
+                    message: message
+                },
+                success: function(response) {
                     addMessage(response.response, false);
-                    saveCurrentConversation(); // Save after bot response
+                    userInput.val('');
+                    
+                    // Save conversation after receiving the response
+                    saveCurrentConversation();
+                },
+                error: function(error) {
+                    console.error('Error:', error);
+                    addMessage('Sorry, there was an error processing your request.', false);
+                    
+                    // Save conversation even if there was an error
+                    saveCurrentConversation();
                 }
-            },
-            error: function(error) {
-                console.error('Error:', error);
-                addMessage('Sorry, there was an error processing your message.', false);
-            }
-        });
+            });
+        }
     });
 
     // Image upload handling

@@ -260,18 +260,30 @@ def save_conversation():
     data = request.json
     conversation_id = data.get('id')
     title = data.get('title', 'New Conversation')
-    messages = data.get('messages', [])
+    update_title_only = data.get('updateTitleOnly', False)
     
     if conversation_id:
         # Update existing conversation
-        result = mongo.db.conversations.update_one(
-            {'_id': ObjectId(conversation_id), 'user_id': str(current_user.id)},
-            {'$set': {
-                'title': title,
-                'messages': messages,
-                'timestamp': datetime.datetime.now()
-            }}
-        )
+        if update_title_only:
+            # Only update the title
+            result = mongo.db.conversations.update_one(
+                {'_id': ObjectId(conversation_id), 'user_id': str(current_user.id)},
+                {'$set': {
+                    'title': title,
+                    'timestamp': datetime.datetime.now()
+                }}
+            )
+        else:
+            # Update title and messages
+            messages = data.get('messages', [])
+            result = mongo.db.conversations.update_one(
+                {'_id': ObjectId(conversation_id), 'user_id': str(current_user.id)},
+                {'$set': {
+                    'title': title,
+                    'messages': messages,
+                    'timestamp': datetime.datetime.now()
+                }}
+            )
         if result.matched_count == 0:
             return jsonify({'error': 'Conversation not found'}), 404
     else:
@@ -279,7 +291,7 @@ def save_conversation():
         conversation = {
             'user_id': str(current_user.id),
             'title': title,
-            'messages': messages,
+            'messages': data.get('messages', []),
             'timestamp': datetime.datetime.now()
         }
         result = mongo.db.conversations.insert_one(conversation)

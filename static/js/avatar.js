@@ -21,6 +21,7 @@ var imgUrl = ""
 let audioContext = null;
 let audioStream = null;
 let volumeMonitor = null;
+
 // Add new diagnostic functions
 async function checkMicrophoneAccess() {
     try {
@@ -32,6 +33,7 @@ async function checkMicrophoneAccess() {
         return false;
     }
 }
+
 function setupAudioMonitoring(stream) {
     if (!audioContext) {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -63,6 +65,18 @@ function logDebug(message, data = '') {
 function logError(message, error = '') {
     console.error(`[${new Date().toISOString()}] ERROR: ${message}`, error);
 }
+
+// Load configuration
+function loadConfig() {
+    // Set default values for configuration
+    document.getElementById('region').value = 'westus2';
+    document.getElementById('APIKey').value = 'YOUR_API_KEY'; // Replace with your actual API key
+    document.getElementById('talkingAvatarCharacter').value = 'lisa';
+    document.getElementById('talkingAvatarStyle').value = 'casual';
+    
+    logDebug('Configuration loaded');
+}
+
 // Connect to avatar service
 function connectAvatar() {
     const cogSvcRegion = document.getElementById('region').value
@@ -666,6 +680,7 @@ function checkLastSpeak() {
 }
 
 window.onload = () => {
+    loadConfig();
     setInterval(() => {
         checkHung()
         checkLastSpeak()
@@ -673,36 +688,48 @@ window.onload = () => {
 }
 
 window.startSession = () => {
+    logDebug('Starting avatar session');
+    
     if (document.getElementById('useLocalVideoForIdle').checked) {
-        document.getElementById('startSession').disabled = true
-        document.getElementById('configuration').hidden = true
-        document.getElementById('microphone').disabled = false
-        document.getElementById('stopSession').disabled = false
-        document.getElementById('localVideo').hidden = false
-        document.getElementById('remoteVideo').style.width = '0.1px'
-        document.getElementById('chatHistory').hidden = false
-        document.getElementById('showTypeMessage').disabled = false
-        return
+        document.getElementById('startSession').disabled = true;
+        document.getElementById('configuration').hidden = true;
+        document.getElementById('microphone').disabled = false;
+        document.getElementById('stopSession').disabled = false;
+        document.getElementById('localVideo').hidden = false;
+        document.getElementById('remoteVideo').style.width = '0.1px';
+        document.getElementById('chatHistory').hidden = false;
+        document.getElementById('showTypeMessage').disabled = false;
+        return;
     }
 
-    connectAvatar()
+    // Add debug logging
+    const region = document.getElementById('region').value;
+    const apiKey = document.getElementById('APIKey').value;
+    logDebug('Starting avatar with region:', region);
+    
+    if (!region || !apiKey) {
+        logError('Missing configuration - Region:', region);
+        return;
+    }
+    
+    connectAvatar();
 }
 
 window.stopSession = () => {
-    document.getElementById('startSession').disabled = false
-    document.getElementById('microphone').disabled = true
-    document.getElementById('stopSession').disabled = true
-    document.getElementById('configuration').hidden = false
-    document.getElementById('chatHistory').hidden = true
-    document.getElementById('showTypeMessage').checked = false
-    document.getElementById('showTypeMessage').disabled = true
-    document.getElementById('userMessageBox').hidden = true
-    document.getElementById('uploadImgIcon').hidden = true
+    document.getElementById('startSession').disabled = false;
+    document.getElementById('microphone').disabled = true;
+    document.getElementById('stopSession').disabled = true;
+    document.getElementById('configuration').hidden = false;
+    document.getElementById('chatHistory').hidden = true;
+    document.getElementById('showTypeMessage').checked = false;
+    document.getElementById('showTypeMessage').disabled = true;
+    document.getElementById('userMessageBox').hidden = true;
+    document.getElementById('uploadImgIcon').hidden = true;
     if (document.getElementById('useLocalVideoForIdle').checked) {
-        document.getElementById('localVideo').hidden = true
+        document.getElementById('localVideo').hidden = true;
     }
 
-    disconnectAvatar()
+    disconnectAvatar();
 }
 
 window.clearChatHistory = () => {

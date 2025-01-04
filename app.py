@@ -290,8 +290,8 @@ def get_config():
     return {
         'AZURE_SPEECH_REGION': os.getenv('AZURE_SPEECH_REGION'),
         'AZURE_SPEECH_API_KEY': os.getenv('AZURE_SPEECH_API_KEY'),
-        'AZURE_OPENAI_ENDPOINT': os.getenv('AZURE_OPENAI_ENDPOINT'),
-        'AZURE_OPENAI_API_KEY': os.getenv('AZURE_OPENAI_API_KEY'),
+        'AZURE_OPENAI_ENDPOINT': os.getenv('AZURE_ENDPOINT'),
+        'AZURE_OPENAI_API_KEY': os.getenv('AZURE_OPENAI_API'),
         'AZURE_OPENAI_DEPLOYMENT_NAME': os.getenv('AZURE_OPENAI_DEPLOYMENT_NAME'),
         'STT_LOCALES': os.getenv('STT_LOCALES'),
         'TTS_VOICE': os.getenv('TTS_VOICE'),

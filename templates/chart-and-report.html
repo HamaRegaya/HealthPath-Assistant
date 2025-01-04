@@ -78,6 +78,143 @@
 				background-color: #1A76D1;
 				color: #fff;
 			}
+
+			/* Modal Styles */
+			.modal {
+				display: none;
+				position: fixed;
+				z-index: 1000;
+				left: 0;
+				top: 0;
+				width: 100%;
+				height: 100%;
+				background-color: rgba(0,0,0,0.5);
+				opacity: 0;
+				transition: opacity 0.3s ease;
+			}
+
+			.modal.show {
+				opacity: 1;
+			}
+
+			.modal-content {
+				background-color: #fefefe;
+				margin: 5% auto;
+				padding: 25px;
+				border-radius: 10px;
+				box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+				position: relative;
+				width: 80%;
+				max-width: 700px;
+				transform: translateY(-20px);
+				transition: transform 0.3s ease;
+			}
+
+			.modal.show .modal-content {
+				transform: translateY(0);
+			}
+
+			.modal-header {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				margin-bottom: 20px;
+				padding-bottom: 15px;
+				border-bottom: 2px solid #f0f0f0;
+			}
+
+			.modal-header h3 {
+				color: #1A76D1;
+				margin: 0;
+			}
+
+			.close-modal {
+				font-size: 24px;
+				color: #666;
+				cursor: pointer;
+				background: none;
+				border: none;
+				padding: 0;
+				transition: color 0.3s ease;
+			}
+
+			.close-modal:hover {
+				color: #1A76D1;
+			}
+
+			.modal-body {
+				max-height: 60vh;
+				overflow-y: auto;
+				padding-right: 10px;
+			}
+
+			.modal-body::-webkit-scrollbar {
+				width: 8px;
+			}
+
+			.modal-body::-webkit-scrollbar-track {
+				background: #f1f1f1;
+				border-radius: 4px;
+			}
+
+			.modal-body::-webkit-scrollbar-thumb {
+				background: #1A76D1;
+				border-radius: 4px;
+			}
+
+			.loading-spinner {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				padding: 40px;
+			}
+
+			.spinner {
+				width: 40px;
+				height: 40px;
+				border: 4px solid #f3f3f3;
+				border-top: 4px solid #1A76D1;
+				border-radius: 50%;
+				animation: spin 1s linear infinite;
+			}
+
+			@keyframes spin {
+				0% { transform: rotate(0deg); }
+				100% { transform: rotate(360deg); }
+			}
+
+			/* Report content styling */
+			#reportContent h1 {
+				font-size: 1.5rem;
+				color: #333;
+				margin-bottom: 1rem;
+			}
+
+			#reportContent h2 {
+				font-size: 1.2rem;
+				color: #1A76D1;
+				margin-top: 1.5rem;
+				margin-bottom: 0.8rem;
+			}
+
+			#reportContent p {
+				font-size: 1rem;
+				line-height: 1.6;
+				color: #555;
+				margin-bottom: 1rem;
+			}
+
+			#reportContent ul {
+				padding-left: 1.2rem;
+				margin-bottom: 1rem;
+			}
+
+			#reportContent li {
+				font-size: 1rem;
+				line-height: 1.6;
+				color: #555;
+				margin-bottom: 0.5rem;
+			}
 		</style>
     </head>
     <body>
@@ -221,8 +358,58 @@
 								<li class="day">• Manage stress effectively</li>
 								<li class="day">• Get adequate sleep</li>
 								<li class="day">• Wear proper footwear</li>
-								
 							</ul>
+							<div class="button" style="text-align: center; margin-top: 20px;">
+								<button onclick="generateReport()" class="btn" style="background: #ffffff;color: #757575;padding: 12px 25px;border-radius: 5px;border: none;cursor: pointer;font-weight: 500;transition: all 0.3s ease;">
+									Generate AI Report
+								</button>
+							</div>
+
+							<!-- Report Modal -->
+							<div id="reportModal" class="modal">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h3 style="font-size: 1.2rem; color: #333;">Glucose Analysis Report</h3>
+										<button class="close-modal" onclick="closeModal()">&times;</button>
+									</div>
+									<div class="modal-body">
+										<div class="loading-spinner" id="reportLoading">
+											<div class="spinner"></div>
+										</div>
+										<div id="reportContent" style="display: none;">
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- <div id="reportContainer" style="margin-top: 20px; display: none;">
+								<div class="loading" style="text-align: center; display: none;">
+									<div class="spinner" style="width: 40px; height: 40px; margin: 20px auto; border: 4px solid #f3f3f3; border-top: 4px solid #1A76D1; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+								</div>
+								<div id="reportContent" style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin-top: 15px; display: none;">
+								</div>
+							</div>
+							<style>
+								@keyframes spin {
+									0% { transform: rotate(0deg); }
+									100% { transform: rotate(360deg); }
+								}
+								#reportContent {
+									font-size: 14px;
+									line-height: 1.6;
+									color: #333;
+								}
+								#reportContent h4 {
+									color: #1A76D1;
+									margin-bottom: 10px;
+								}
+								#reportContent ul {
+									padding-left: 20px;
+									margin-bottom: 10px;
+								}
+								#reportContent li {
+									margin-bottom: 5px;
+								}
+							</style> -->
 						</div>
 					</div>
 				</div>
@@ -475,6 +662,75 @@
 					data: glucoseData[timeframe].data
 				}]);
 			}
+
+			// Modal functions
+			function openModal() {
+				const modal = document.getElementById('reportModal');
+				modal.style.display = 'block';
+				setTimeout(() => modal.classList.add('show'), 10);
+			}
+
+			function closeModal() {
+				const modal = document.getElementById('reportModal');
+				modal.classList.remove('show');
+				setTimeout(() => modal.style.display = 'none', 300);
+			}
+
+			// Close modal when clicking outside
+			window.onclick = function(event) {
+				const modal = document.getElementById('reportModal');
+				if (event.target == modal) {
+					closeModal();
+				}
+			}
+
+			// Function to generate AI report
+			async function generateReport() {
+				const reportLoading = document.getElementById('reportLoading');
+				const reportContent = document.getElementById('reportContent');
+				
+				// Show modal and loading state
+				openModal();
+				reportLoading.style.display = 'flex';
+				reportContent.style.display = 'none';
+
+				try {
+					// Get current timeframe data
+					const currentTimeframe = document.querySelector('.timeframe-buttons .btn.active').id.replace('Btn', '');
+					const data = glucoseData[currentTimeframe];
+					
+					// Prepare the message for the AI
+					const message = {
+						timeframe: currentTimeframe,
+						readings: data.data,
+						timestamps: data.categories
+					};
+
+					// Send request to backend
+					const response = await fetch('/api/generate-glucose-report', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+						},
+						body: JSON.stringify(message)
+					});
+
+					if (!response.ok) {
+						throw new Error('Network response was not ok');
+					}
+
+					const result = await response.json();
+
+					// Display the report
+					reportContent.innerHTML = result.report;
+					reportLoading.style.display = 'none';
+					reportContent.style.display = 'block';
+				} catch (error) {
+					reportContent.innerHTML = '<div style="color: #ff0000; text-align: center; padding: 20px;">Error generating report. Please try again.</div>';
+					reportLoading.style.display = 'none';
+					reportContent.style.display = 'block';
+				}
+			}
 		</script>
 		<!-- jquery Min JS -->
         <script data-cfasync="false" src="../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="../static/js/jquery.min.js"></script>
@@ -516,7 +772,5 @@
 		<script src="../static/js/bootstrap.min.js"></script>
 		<!-- Main JS -->
 		<script src="../static/js/main.js"></script>
-    <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'8e4fd825fb43ddc0',t:'MTczMjAxNTU3Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='../../cdn-cgi/challenge-platform/h/b/scripts/jsd/22755d9a86c9/maind41d.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
-
-<!-- Mirrored from wpthemesgrid.com/themes/medikit/appointment.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 19 Nov 2024 11:27:02 GMT -->
+	</body>
 </html>

@@ -388,6 +388,60 @@ def get_config():
         'AVATAR_CHARACTER': os.getenv('AVATAR_CHARACTER'),
         'AVATAR_STYLE': os.getenv('AVATAR_STYLE')
     }
+
+@app.route('/api/generate-glucose-report', methods=['POST'])
+def generate_glucose_report():
+    try:
+        data = request.json
+        timeframe = data['timeframe']
+        readings = data['readings']
+        timestamps = data['timestamps']
+
+        # Calculate statistics
+        avg_glucose = sum(readings) / len(readings)
+        max_glucose = max(readings)
+        min_glucose = min(readings)
+        high_readings = len([x for x in readings if x > 180])
+        low_readings = len([x for x in readings if x < 70])
+
+        # Prepare the analysis message
+        analysis_message = f"""
+        As a diabetes management assistant, create a clear and patient-friendly report based on the following glucose readings:
+
+        Timeframe: {timeframe}
+        Timestamps: {timestamps}
+        Readings: {readings}
+
+        ### Key Statistics:
+        - **Average Glucose Level:** {avg_glucose:.1f} mg/dL
+        - **Maximum Glucose Level:** {max_glucose} mg/dL
+        - **Minimum Glucose Level:** {min_glucose} mg/dL
+        - **Readings Above 180 mg/dL (High):** {high_readings}
+        - **Readings Below 70 mg/dL (Low):** {low_readings}
+
+        ### Instructions:
+        1. Provide a **brief and clear overview** of glucose control, summarizing the data.
+        2. Highlight **key patterns and trends** observed in the readings, such as spikes or lows at specific times.
+        3. Include **specific, actionable recommendations** to help improve glucose management.
+
+        ### Format:
+        Output the response as well-structured HTML with:
+        - Headings (e.g., `<h1>`, `<h2>`) for sections.
+        - Bullet points for observations and recommendations.
+        - Concise language for easy understanding by the patient.
+        """
+
+
+        from langchain.schema import HumanMessage
+        human_message = HumanMessage(content=[{"type": "text", "text": analysis_message}])
+        
+        response = llm.invoke([human_message])
+
+        return jsonify({"report": response.content})
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 @app.route('/delete_conversation/<conversation_id>', methods=['DELETE'])
 @login_required
 def delete_conversation(conversation_id):

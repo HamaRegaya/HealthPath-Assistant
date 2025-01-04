@@ -408,7 +408,7 @@
 
 <div class="avatar-controls">
     <div class="button-container">
-        <button id="startSession" onclick="window.startSession()">Open Avatar</button>
+        <button id="startSession" onclick="window.startSession()" style="display: none;">Open Avatar</button>
         <button id="microphone" onclick="window.microphone()" disabled>Start Mic</button>
         <button id="stopSpeaking" onclick="stopSpeaking()" disabled>Stop</button>
         <!-- <button id="stopSession" onclick="window.stopSession()"  style="">Close Avatar</button>
@@ -473,6 +473,25 @@
 		</div>
         <script>
             document.addEventListener('DOMContentLoaded', function() {
+                loadConfig();
+                
+                // Check if we should start the avatar automatically
+                if (localStorage.getItem('startAvatar') === 'true') {
+                    // Clear the flag
+                    localStorage.removeItem('startAvatar');
+                    // Start the avatar after config is loaded
+                    setTimeout(() => {
+                        // Make sure configuration is loaded
+                        const region = document.getElementById('region').value;
+                        const apiKey = document.getElementById('APIKey').value;
+                        if (region && apiKey) {
+                            window.startSession();
+                        } else {
+                            console.error('Configuration not loaded properly');
+                        }
+                    }, 1000); // Increased delay to ensure config is loaded
+                }
+
                 const activeLink = document.querySelector('.nav.menu li.active');
                 if (activeLink) {
                     activeLink.classList.remove('active');

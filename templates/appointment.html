@@ -285,20 +285,23 @@
 						</div>
 						<div class="form-group form-group-half">
 							<label for="appointmentTime">Time</label>
-							<select id="appointmentTime" name="appointmentTime" required class="form-select">
-								<option value="">Select time</option>
-								<option value="08:00">08:00</option>
-								<option value="09:00">09:00</option>
-								<option value="10:00">10:00</option>
-								<option value="11:00">11:00</option>
-								<option value="12:00">12:00</option>
-								<option value="13:00">13:00</option>
-								<option value="14:00">14:00</option>
-								<option value="15:00">15:00</option>
-								<option value="16:00">16:00</option>
-								<option value="17:00">17:00</option>
-								<option value="18:00">18:00</option>
-							</select>
+							<div class="custom-select">
+								<div class="select-selected" onclick="toggleTimeDropdown(event)">Select Time</div>
+								<div class="select-items select-hide">
+									<div onclick="selectTime(event, '08:00')">08:00</div>
+									<div onclick="selectTime(event, '09:00')">09:00</div>
+									<div onclick="selectTime(event, '10:00')">10:00</div>
+									<div onclick="selectTime(event, '11:00')">11:00</div>
+									<div onclick="selectTime(event, '12:00')">12:00</div>
+									<div onclick="selectTime(event, '13:00')">13:00</div>
+									<div onclick="selectTime(event, '14:00')">14:00</div>
+									<div onclick="selectTime(event, '15:00')">15:00</div>
+									<div onclick="selectTime(event, '16:00')">16:00</div>
+									<div onclick="selectTime(event, '17:00')">17:00</div>
+									<div onclick="selectTime(event, '18:00')">18:00</div>
+								</div>
+								<input type="hidden" id="appointmentTime" name="appointmentTime" required>
+							</div>
 						</div>
 					</div>
 					<div class="form-group form-buttons">
@@ -423,28 +426,89 @@
 			box-shadow: 0 0 0 3px rgba(26,118,209,0.1);
 		}
 		
-		.form-select {
+		.custom-select {
+			position: relative;
 			width: 100%;
+		}
+
+		.select-selected {
+			background-color: #fff;
 			padding: 10px 12px;
 			border: 1px solid #ddd;
 			border-radius: 4px;
-			font-size: 14px;
-			transition: border-color 0.3s ease;
-			background-color: #fff;
 			cursor: pointer;
-			appearance: none;
-			background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 8.825L1.175 4 2.238 2.938 6 6.7l3.763-3.762L10.825 4z'/%3E%3C/svg%3E");
-			background-repeat: no-repeat;
-			background-position: right 12px center;
-			padding-right: 32px;
+			font-size: 14px;
+			transition: all 0.3s ease;
+			position: relative;
+			margin-left: -13px;
+			margin-top: -7px;
+			width: 123%;
 		}
-		
-		.form-select:focus {
+
+		.select-selected:after {
+			content: '';
+			position: absolute;
+			right: 12px;
+			top: 50%;
+			transform: translateY(-50%);
+			width: 0;
+			height: 0;
+			border-left: 5px solid transparent;
+			border-right: 5px solid transparent;
+			border-top: 5px solid #333;
+		}
+
+		.select-selected:hover {
 			border-color: #1A76D1;
-			outline: none;
-			box-shadow: 0 0 0 3px rgba(26,118,209,0.1);
 		}
-		
+
+		.select-items {
+			position: absolute;
+			top: 100%;
+			left: 0;
+			right: 0;
+			z-index: 99;
+			background-color: #fff;
+			border: 1px solid #ddd;
+			border-radius: 4px;
+			margin-top: 4px;
+			max-height: 200px;
+			overflow-y: auto;
+			box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+		}
+
+		.select-hide {
+			display: none;
+		}
+
+		.select-items div {
+			padding: 10px 12px;
+			cursor: pointer;
+			transition: all 0.2s;
+		}
+
+		.select-items div:hover {
+			background-color: #1A76D1;
+			color: #fff;
+		}
+
+		.select-items::-webkit-scrollbar {
+			width: 6px;
+		}
+
+		.select-items::-webkit-scrollbar-track {
+			background: #f1f1f1;
+		}
+
+		.select-items::-webkit-scrollbar-thumb {
+			background: #888;
+			border-radius: 3px;
+		}
+
+		.select-items::-webkit-scrollbar-thumb:hover {
+			background: #666;
+		}
+
 		.form-buttons {
 			display: flex;
 			justify-content: flex-end;
@@ -475,7 +539,7 @@
 			transform: translateY(-1px);
 			box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 		}
-		
+
 		@media (max-width: 768px) {
 			.modal-content {
 				margin: 10% auto;
@@ -604,8 +668,52 @@
 				closeAppointmentModal();
 			}
 		}
+
+		function toggleTimeDropdown(event) {
+			event.stopPropagation();
+			const items = event.target.nextElementSibling;
+			const isHidden = items.classList.contains('select-hide');
+			
+			// Close all other dropdowns first
+			document.querySelectorAll('.select-items').forEach(dropdown => {
+				if (dropdown !== items) {
+					dropdown.classList.add('select-hide');
+				}
+			});
+
+			items.classList.toggle('select-hide');
+			
+			if (!isHidden) {
+				document.removeEventListener('click', closeAllDropdowns);
+			} else {
+				setTimeout(() => {
+					document.addEventListener('click', closeAllDropdowns);
+				}, 0);
+			}
+		}
+
+		function selectTime(event, time) {
+			event.stopPropagation();
+			const container = event.target.closest('.custom-select');
+			const selected = container.querySelector('.select-selected');
+			const input = container.querySelector('input[type="hidden"]');
+			
+			selected.textContent = time;
+			input.value = time;
+			
+			container.querySelector('.select-items').classList.add('select-hide');
+		}
+
+		function closeAllDropdowns(event) {
+			if (!event.target.matches('.select-selected')) {
+				document.querySelectorAll('.select-items').forEach(dropdown => {
+					dropdown.classList.add('select-hide');
+				});
+				document.removeEventListener('click', closeAllDropdowns);
+			}
+		}
 		</script>
-		
+
 		<!-- jquery Min JS -->
         <script data-cfasync="false" src="../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="../static/js/jquery.min.js"></script>
 		<!-- jquery Migrate JS -->
@@ -646,7 +754,7 @@
 		<script src="../static/js/bootstrap.min.js"></script>
 		<!-- Main JS -->
 		<script src="../static/js/main.js"></script>
-    <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'8e4fd827ce728570',t:'MTczMjAxNTU3Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='../../cdn-cgi/challenge-platform/h/b/scripts/jsd/22755d9a86c9/maind41d.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+	<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'8e4fd827ce728570',t:'MTczMjAxNTU3Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='../../cdn-cgi/challenge-platform/h/b/scripts/jsd/22755d9a86c9/maind41d.js';document.getElementsByTagName('head')[0].appendChild(a);"}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 
 <!-- Mirrored from wpthemesgrid.com/themes/medikit/time-table.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 19 Nov 2024 11:27:02 GMT -->
 </html>

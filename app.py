@@ -198,8 +198,28 @@ def chatbot():
 
 @app.route('/appointment')
 @login_required
-def appoinment():
-    return render_template('appointment.html')
+def appointment():
+    user_appointments = mongo.db.appointments.find({"user_id": str(current_user.id)})
+    return render_template('appointment.html', appointments=list(user_appointments))
+
+@app.route('/api/appointments', methods=['POST'])
+@login_required
+def save_appointment():
+    appointment_data = request.json
+    appointment_data['user_id'] = str(current_user.id)
+    
+    mongo.db.appointments.insert_one(appointment_data)
+    return jsonify({"success": True})
+
+@app.route('/api/appointments', methods=['GET'])
+@login_required
+def get_appointments():
+    user_appointments = mongo.db.appointments.find({"user_id": str(current_user.id)})
+    appointments_list = []
+    for appointment in user_appointments:
+        appointment['_id'] = str(appointment['_id'])
+        appointments_list.append(appointment)
+    return jsonify(appointments_list)
 
 @app.route('/logout')
 @login_required

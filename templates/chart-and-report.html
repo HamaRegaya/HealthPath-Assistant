@@ -54,8 +54,31 @@
 			max-width: 650px;
 			margin: 35px auto;
 			}
-			</style>
-		
+
+			.timeframe-buttons {
+			text-align: center;
+			margin-bottom: 20px;
+			margin-top: 20px;
+			}
+
+			.timeframe-buttons .btn {
+				margin: 0 10px;
+				padding: 8px 20px;
+				background-color: #fff;
+				border: 2px solid #1A76D1;
+				color: #1A76D1;
+				border-radius: 5px;
+				cursor: pointer;
+				transition: all 0.3s ease;
+				font-weight: 500;
+			}
+
+			.timeframe-buttons .btn:hover,
+			.timeframe-buttons .btn.active {
+				background-color: #1A76D1;
+				color: #fff;
+			}
+		</style>
     </head>
     <body>
 	
@@ -109,7 +132,12 @@
 						<div class="appointment-inner">
 							<div class="title">
 								<h3>Your Glucose Level Tracking</h3>
-								<p>Monitor your blood glucose levels over the past 7 days</p>
+								<p>Monitor your blood glucose levels over time</p>
+							</div>
+							<!-- Timeframe Selection Buttons -->
+							<div class="timeframe-buttons">
+								<button class="btn active" id="daysBtn" onclick="switchTimeframe('days')">View by Days</button>
+								<button class="btn" id="hoursBtn" onclick="switchTimeframe('hours')">View by Hours</button>
 							</div>
 							<div id="chart">
 							</div>
@@ -179,7 +207,7 @@
 						</div>
 					</div>
 					<div class="col-lg-5 col-md-12 ">
-						<div class="work-hour">
+						<div class="work-hour" style="height: 669px;">
 							<h3>Diabetes Management Tips</h3>
 							<ul class="time-sidual">
 								<li class="day">• Maintain a balanced diet</li>
@@ -288,10 +316,41 @@
 		</footer>
 		<!--/ End Footer Area -->
 		<script>
+			// Static glucose data
+			const glucoseData = {
+				days: {
+					data: [142, 165, 128, 187, 145, 156, 133],
+					categories: Array.from({length: 7}, (_, i) => {
+						let date = new Date();
+						date.setDate(date.getDate() - (6 - i));
+						return date.toLocaleDateString('en-US', {month: 'short', day: 'numeric'});
+					})
+				},
+				hours: {
+					data: [132, 145, 165, 155, 142, 138, 148],
+					categories: ['6:00 AM', '9:00 AM', '12:00 PM', '3:00 PM', '6:00 PM', '9:00 PM', '11:00 PM']
+				}
+			};
+
 			var options = {
 				chart: {
-					height: 280,
-					type: "area"
+					height: 400,
+					type: "area",
+					zoom: {
+						enabled: true
+					},
+					toolbar: {
+						show: true
+					},
+					animations: {
+						enabled: true,
+						easing: 'easeinout',
+						speed: 800,
+						dynamicAnimation: {
+							enabled: true,
+							speed: 350
+						}
+					}
 				},
 				dataLabels: {
 					enabled: false
@@ -299,24 +358,49 @@
 				series: [
 					{
 						name: "Blood Glucose (mg/dL)",
-						data: [142, 165, 128, 187, 145, 156, 133]
+						data: glucoseData.days.data
 					}
 				],
+				stroke: {
+					curve: 'smooth',
+					width: 3
+				},
+				colors: ['#1A76D1'],
+				markers: {
+					size: 5
+				},
 				fill: {
 					type: "gradient",
 					gradient: {
 						shadeIntensity: 1,
 						opacityFrom: 0.7,
 						opacityTo: 0.9,
-						stops: [0, 90, 100]
+						stops: [0, 90, 100],
+						colorStops: [
+							{
+								offset: 0,
+								color: '#1A76D1',
+								opacity: 0.7
+							},
+							{
+								offset: 100,
+								color: '#1A76D1',
+								opacity: 0.1
+							}
+						]
+					}
+				},
+				grid: {
+					row: {
+						colors: ['#f3f3f3', 'transparent'],
+						opacity: 0.5
 					}
 				},
 				xaxis: {
-					categories: Array.from({length: 7}, (_, i) => {
-						let date = new Date();
-						date.setDate(date.getDate() - (6 - i));
-						return date.toLocaleDateString('en-US', {month: 'short', day: 'numeric'});
-					})
+					categories: glucoseData.days.categories,
+					title: {
+						text: 'Date'
+					}
 				},
 				yaxis: {
 					title: {
@@ -324,12 +408,73 @@
 					},
 					min: 70,
 					max: 200,
+					tickAmount: 8,
+					labels: {
+						formatter: function(val) {
+							return val.toFixed(0);
+						}
+					}
+				},
+				annotations: {
+					yaxis: [
+						{
+							y: 180,
+							borderColor: '#ff0000',
+							label: {
+								text: 'High',
+								style: {
+									color: '#ff0000'
+								}
+							}
+						},
+						{
+							y: 70,
+							borderColor: '#ff0000',
+							label: {
+								text: 'Low',
+								style: {
+									color: '#ff0000'
+								}
+							}
+						}
+					]
+				},
+				tooltip: {
+					y: {
+						formatter: function(val) {
+							return val + " mg/dL"
+						}
+					}
 				}
 			};
 			
 			var chart = new ApexCharts(document.querySelector("#chart"), options);
-			
 			chart.render();
+
+			// Function to switch between timeframes
+			function switchTimeframe(timeframe) {
+				// Update button states
+				document.querySelectorAll('.timeframe-buttons .btn').forEach(btn => {
+					btn.classList.remove('active');
+				});
+				document.getElementById(timeframe + 'Btn').classList.add('active');
+
+				// Update chart data
+				chart.updateOptions({
+					xaxis: {
+						categories: glucoseData[timeframe].categories,
+						title: {
+							text: timeframe === 'days' ? 'Date' : 'Time'
+						}
+					}
+				});
+
+				// Update series data with animation
+				chart.updateSeries([{
+					name: "Blood Glucose (mg/dL)",
+					data: glucoseData[timeframe].data
+				}]);
+			}
 		</script>
 		<!-- jquery Min JS -->
         <script data-cfasync="false" src="../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="../static/js/jquery.min.js"></script>

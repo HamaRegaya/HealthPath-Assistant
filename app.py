@@ -14,6 +14,7 @@ import base64
 from io import BytesIO
 from PIL import Image
 import httpx
+from datetime import timedelta
 
 load_dotenv(override=True)
 
@@ -306,6 +307,73 @@ def save_conversation():
     
     return jsonify({'success': True, 'id': conversation_id})
 
+@app.route('/chart-and-report')
+@login_required
+def chart_and_report():
+    return render_template('chart-and-report.html')
+
+@app.route('/api/glucose-data', methods=['GET'])
+@login_required
+def get_glucose_data():
+    # Get the timeframe from query parameters
+    timeframe = request.args.get('timeframe', 'days')
+    user_id = current_user.id
+
+    # Query glucose data from MongoDB based on timeframe
+    if timeframe == 'days':
+        # Get daily readings for the past week
+        start_date = datetime.now() - timedelta(days=7)
+        pipeline = [
+            {
+                '$match': {
+                    'user_id': user_id,
+                    'timestamp': {'$gte': start_date}
+                }
+            },
+            {
+                '$group': {
+                    '_id': {'$dateToString': {'format': '%Y-%m-%d', 'date': '$timestamp'}},
+                    'average_level': {'$avg': '$glucose_level'}
+                }
+            },
+            {'$sort': {'_id': 1}}
+        ]
+    else:
+        # Get hourly readings for today
+        today_start = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        pipeline = [
+            {
+                '$match': {
+                    'user_id': user_id,
+                    'timestamp': {'$gte': today_start}
+                }
+            },
+            {
+                '$group': {
+                    '_id': {'$dateToString': {'format': '%H:00', 'date': '$timestamp'}},
+                    'average_level': {'$avg': '$glucose_level'}
+                }
+            },
+            {'$sort': {'_id': 1}}
+        ]
+
+    results = list(mongo.db.glucose_readings.aggregate(pipeline))
+    
+    # Format the data for the chart
+    if timeframe == 'days':
+        dates = [r['_id'] for r in results]
+        levels = [round(r['average_level'], 1) for r in results]
+        return jsonify({
+            'dates': dates,
+            'levels': levels
+        })
+    else:
+        times = [r['_id'] for r in results]
+        levels = [round(r['average_level'], 1) for r in results]
+        return jsonify({
+            'times': times,
+            'levels': levels
+        })
 
 @app.route('/config')
 def get_config():

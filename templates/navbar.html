@@ -23,7 +23,7 @@
                                 <ul class="nav menu">
                                     <li class="active"><a href="{{ url_for('index') }}">Home</a>
                                     </li>
-                                    <li><a href="#services">Services</a>
+                                    <!-- <li><a href="#services">Services</a> -->
                                         <!-- <ul class="dropdown">
                                             <li><a href="doctors.html">Doctor</a></li>
                                             <li><a href="doctor-details.html">Doctor Details</a></li>
@@ -35,7 +35,7 @@
                                     </li>
                                     <li><a href="{{ url_for('avatar') }}" onclick="localStorage.setItem('startAvatar', 'true');">3D Assistant</a>
                                     </li>
-                                    <li><a href="#">Contact</a></li>
+                                    <li><a href="{{ url_for('appointment') }}">Appointments</a></li>
                                 </ul>
                             </nav>
                         </div>

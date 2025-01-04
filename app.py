@@ -114,12 +114,14 @@ def chat():
     if request.method == 'POST':
         message = request.form.get('message', '').strip()
         image = request.files.get('image')
+        conversation_id = request.form.get('conversationId')
 
         if not message and not image:
             return jsonify({'response': 'No input provided'}), 400
 
         try:
-            # Create the message content
+            # Create the message content and prepare user message for saving
+            user_message = {'role': 'user', 'content': message or ''}
             if image:
                 # Handle image if present
                 image_data = base64.b64encode(image.read()).decode('utf-8')
@@ -127,6 +129,7 @@ def chat():
                     {"type": "text", "text": message if message else ""},
                     {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{image_data}"}}
                 ]
+                user_message['image'] = f"data:image/jpeg;base64,{image_data}"
             else:
                 content = message
 
@@ -137,7 +140,29 @@ def chat():
             response = llm.invoke([human_message])
             
             if response and hasattr(response, 'content'):
-                return jsonify({'response': response.content})
+                ai_response = response.content
+                
+                # Save both user message and AI response to the conversation
+                if conversation_id:
+                    conversation = mongo.db.conversations.find_one({"_id": ObjectId(conversation_id)})
+                    if conversation:
+                        # Add new messages to existing conversation
+                        messages = conversation.get('messages', [])
+                        messages.append(user_message)
+                        messages.append({'role': 'assistant', 'content': ai_response})
+                        
+                        # Update conversation in database
+                        mongo.db.conversations.update_one(
+                            {'_id': ObjectId(conversation_id)},
+                            {
+                                '$set': {
+                                    'messages': messages,
+                                    'timestamp': datetime.datetime.now()
+                                }
+                            }
+                        )
+                
+                return jsonify({'response': ai_response})
             else:
                 return jsonify({'response': 'I apologize, but I could not process your request at this time.'}), 500
 

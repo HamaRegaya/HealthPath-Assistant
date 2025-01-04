@@ -335,6 +335,7 @@ $(document).ready(function() {
         const formData = new FormData();
         if (message) formData.append('message', message);
         if (imageFile) formData.append('image', imageFile);
+        if (currentConversationId) formData.append('conversationId', currentConversationId);
 
         if (imageFile) {
             const reader = new FileReader();
@@ -359,13 +360,11 @@ $(document).ready(function() {
             success: function(response) {
                 if (response.response) {
                     addMessage(response.response, false);
-                    saveCurrentConversation(); // Save after bot response
                 }
             },
             error: function(error) {
                 console.error('Error:', error);
                 addMessage('Sorry, there was an error processing your message.', false);
-                saveCurrentConversation();
             }
         });
     });
@@ -439,7 +438,4 @@ $(document).ready(function() {
         $('#start-btn').parent().hide();
         console.warn("Speech Recognition is not supported in this browser");
     }
-
-    // Save conversation periodically
-    setInterval(saveCurrentConversation, 30000);
 });

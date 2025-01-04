@@ -1,12 +1,12 @@
 import datetime
-from flask import Flask, render_template, request, redirect, url_for, flash,jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_pymongo import PyMongo
 from werkzeug.security import generate_password_hash, check_password_hash
-# from openai import AzureOpenAI
 from langchain_openai import AzureChatOpenAI 
 from langchain.chains import ConversationChain
 from langchain.memory import ConversationBufferMemory
+from langchain.schema import HumanMessage
 from dotenv import load_dotenv
 from bson import ObjectId
 import os
@@ -115,28 +115,76 @@ def chat():
     if request.method == 'POST':
         message = request.form.get('message', '').strip()
         image = request.files.get('image')
+        conversation_id = request.form.get('conversationId')
 
         if not message and not image:
             return jsonify({'response': 'No input provided'}), 400
 
-        gpt_input = []
+        try:
+            # Create the message content and prepare user message for saving
+            user_message = {
+                'role': 'user',
+                'content': message or '',
+                'timestamp': datetime.datetime.now()
+            }
+            
+            if image:
+                # Handle image if present
+                image_data = base64.b64encode(image.read()).decode('utf-8')
+                content = [
+                    {"type": "text", "text": message if message else ""},
+                    {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{image_data}"}}
+                ]
+                user_message['image'] = f"data:image/jpeg;base64,{image_data}"
+            else:
+                content = message
 
-        if message:
-            gpt_input.append({"type": "text", "text": message})
+            # Create the message for the AI
+            human_message = HumanMessage(content=content)
+            
+            # Get AI response
+            response = llm.invoke([human_message])
+            
+            if response and hasattr(response, 'content'):
+                ai_response = response.content
+                
+                # Create AI message with timestamp
+                ai_message = {
+                    'role': 'assistant',
+                    'content': ai_response,
+                    'timestamp': datetime.datetime.now()
+                }
+                
+                # Save both user message and AI response to the conversation
+                if conversation_id:
+                    conversation = mongo.db.conversations.find_one({"_id": ObjectId(conversation_id)})
+                    if conversation:
+                        # Add new messages to existing conversation
+                        messages = conversation.get('messages', [])
+                        messages.append(user_message)
+                        messages.append(ai_message)
+                        
+                        # Sort messages by timestamp
+                        messages.sort(key=lambda x: x.get('timestamp', datetime.datetime.min))
+                        
+                        # Update conversation in database
+                        mongo.db.conversations.update_one(
+                            {'_id': ObjectId(conversation_id)},
+                            {
+                                '$set': {
+                                    'messages': messages,
+                                    'timestamp': datetime.datetime.now()
+                                }
+                            }
+                        )
+                
+                return jsonify({'response': ai_response})
+            else:
+                return jsonify({'response': 'I apologize, but I could not process your request at this time.'}), 500
 
-        if image:
-            image_data = base64.b64encode(image.read()).decode("utf-8")
-            gpt_input.append({
-                "type": "image_url",
-                "image_url": {"url": f"data:image/jpeg;base64,{image_data}"}
-            })
-
-        from langchain.schema import HumanMessage
-        human_message = HumanMessage(content=gpt_input)
-
-        response = llm.invoke([human_message])
-
-        return jsonify({'response': response.content})
+        except Exception as e:
+            print(f"Error in chat route: {str(e)}")
+            return jsonify({'response': 'An error occurred while processing your request.'}), 500
 
     return render_template('chatbot.html')
 
@@ -267,10 +315,14 @@ def get_conversation(conversation_id):
     })
     
     if conversation:
+        messages = conversation.get('messages', [])
+        # Sort messages by timestamp if available
+        messages.sort(key=lambda x: x.get('timestamp', datetime.datetime.min).isoformat() if isinstance(x.get('timestamp'), datetime.datetime) else datetime.datetime.min.isoformat())
+        
         return jsonify({
             'id': str(conversation['_id']),
             'title': conversation.get('title', 'New Conversation'),
-            'messages': conversation.get('messages', [])
+            'messages': messages
         })
     return jsonify({'error': 'Conversation not found'}), 404
 
@@ -280,18 +332,30 @@ def save_conversation():
     data = request.json
     conversation_id = data.get('id')
     title = data.get('title', 'New Conversation')
-    messages = data.get('messages', [])
+    update_title_only = data.get('updateTitleOnly', False)
     
     if conversation_id:
         # Update existing conversation
-        result = mongo.db.conversations.update_one(
-            {'_id': ObjectId(conversation_id), 'user_id': str(current_user.id)},
-            {'$set': {
-                'title': title,
-                'messages': messages,
-                'timestamp': datetime.datetime.now()
-            }}
-        )
+        if update_title_only:
+            # Only update the title
+            result = mongo.db.conversations.update_one(
+                {'_id': ObjectId(conversation_id), 'user_id': str(current_user.id)},
+                {'$set': {
+                    'title': title,
+                    'timestamp': datetime.datetime.now()
+                }}
+            )
+        else:
+            # Update title and messages
+            messages = data.get('messages', [])
+            result = mongo.db.conversations.update_one(
+                {'_id': ObjectId(conversation_id), 'user_id': str(current_user.id)},
+                {'$set': {
+                    'title': title,
+                    'messages': messages,
+                    'timestamp': datetime.datetime.now()
+                }}
+            )
         if result.matched_count == 0:
             return jsonify({'error': 'Conversation not found'}), 404
     else:
@@ -299,7 +363,7 @@ def save_conversation():
         conversation = {
             'user_id': str(current_user.id),
             'title': title,
-            'messages': messages,
+            'messages': data.get('messages', []),
             'timestamp': datetime.datetime.now()
         }
         result = mongo.db.conversations.insert_one(conversation)

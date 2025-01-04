@@ -1,15 +1,9 @@
 $(document).ready(function() {
     // Configure marked.js
-    // marked.setOptions({
-    //     highlight: function(code, language) {
-    //         if (language && hljs.getLanguage(language)) {
-    //             return hljs.highlight(code, { language: language }).value;
-    //         }
-    //         return hljs.highlightAuto(code).value;
-    //     },
-    //     breaks: true,
-    //     gfm: true
-    // });
+    marked.setOptions({
+        breaks: true,
+        gfm: true
+    });
 
     // Sidebar toggle functionality
     $('.toggle-sidebar').click(function() {
@@ -44,7 +38,6 @@ $(document).ready(function() {
         const currentTitle = titleSpan.text();
         const conversationId = chatHistoryItem.attr('data-conversation-id');
         
-        // Create input field
         const input = $('<input>')
             .addClass('edit-title-input')
             .val(currentTitle)
@@ -55,8 +48,6 @@ $(document).ready(function() {
                         titleSpan.text(newTitle);
                         $(this).remove();
                         titleSpan.show();
-                        
-                        // Save the new title to database
                         updateConversationTitle(conversationId, newTitle);
                     }
                 }
@@ -65,7 +56,6 @@ $(document).ready(function() {
                 const newTitle = $(this).val().trim();
                 if (newTitle) {
                     titleSpan.text(newTitle);
-                    // Save the new title to database
                     updateConversationTitle(conversationId, newTitle);
                 }
                 $(this).remove();
@@ -80,62 +70,56 @@ $(document).ready(function() {
     function renderMarkdown(markdown) {
         return marked(markdown);
     }   
+
     // Function to simulate typing effect
     function typeMessage(element, text, index = 0) {
         if (index < text.length) {
             let currentText = text.substring(0, index + 1);
             element.html(renderMarkdown(currentText));
-            setTimeout(() => typeMessage(element, text, index + 1), 10); // Faster typing speed
+            setTimeout(() => typeMessage(element, text, index + 1), 10);
         }
     }
 
     // Function to add a message to the chat
     function addMessage(message, isUser = false, imageUrl = null) {
-        // Create the message container
         const messageDiv = $('<div>')
             .addClass('message')
             .addClass(isUser ? 'message-user' : 'message-bot')
             .addClass('message-hidden');
     
         if (!isUser) {
-            // Add typing indicator immediately
             const typingIndicator = $('<div class="typing-indicator"><span></span><span></span><span></span></div>');
             chatMessages.append(typingIndicator);
             chatMessages.scrollTop(chatMessages[0].scrollHeight);
     
-            // Start typing after a brief delay
             setTimeout(() => {
                 typingIndicator.remove();
                 chatMessages.append(messageDiv);
                 messageDiv.removeClass('message-hidden');
                 typeMessage(messageDiv, message);
                 chatMessages.scrollTop(chatMessages[0].scrollHeight);
-            }, 500); // Reduced delay before typing starts
+            }, 500);
         } else {
-            // If there's an image, append it above the message div
             if (imageUrl) {
                 const imagePreview = $('<img>')
                     .addClass('message-image-preview')
                     .attr('src', imageUrl)
                     .attr('alt', 'Uploaded image');
-                chatMessages.append(imagePreview); // Append the image directly to the chat container
+                    chatMessages.append(imagePreview);
             }
-    
-            // Add the message
             messageDiv.text(message);
             chatMessages.append(messageDiv);
-    
-            // Reveal the message with animation
             setTimeout(() => messageDiv.removeClass('message-hidden'), 50);
             chatMessages.scrollTop(chatMessages[0].scrollHeight);
         }
     }
-     
 
     // Function to clear chat messages
-    function clearChat() {
+    function clearChat(showWelcome = true) {
         $('#chat-messages').empty();
-        addMessage("Hello! I'm your diabetes management assistant. How can I help you today?", false);
+        if (showWelcome) {
+            addMessage("Hello! I'm your diabetes management assistant. How can I help you today?", false);
+        }
     }
 
     let currentConversationId = null;
@@ -145,7 +129,6 @@ $(document).ready(function() {
     function loadConversations() {
         $.get('/get_conversations')
             .done(function(conversations) {
-                // Clear existing conversations except the header
                 $('.chat-history').remove();
                 
                 conversations.forEach(function(conv) {
@@ -154,7 +137,6 @@ $(document).ready(function() {
                     chatItem.insertAfter('.sidebar-header');
                 });
 
-                // If this is the first load and no conversation is selected, load the first one
                 if (!currentConversationId && conversations.length > 0) {
                     loadConversation(conversations[0].id);
                 }
@@ -169,54 +151,54 @@ $(document).ready(function() {
 
     // Save current conversation
     function saveCurrentConversation() {
-        if (!currentConversationId) return;
-
+        // Collect all messages from the chat
         const messages = [];
-        $('.chat-message').each(function() {
-            messages.push({
-                content: $(this).find('.message-content').html(),
-                isUser: $(this).hasClass('user-message')
-            });
-        });
-
-        $.ajax({
-            url: '/save_conversation',
-            method: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({
-                id: currentConversationId,
-                title: $('.chat-history[data-conversation-id="' + currentConversationId + '"] .chat-title').text(),
-                messages: messages
-            })
-        }).fail(function(error) {
-            console.error('Error saving conversation:', error);
-        });
-    }
-
-    // Load conversation messages
-    function loadConversation(conversationId) {
-        if (currentConversationId === conversationId) return; // Don't reload if already selected
-        
-        $.get('/get_conversation/' + conversationId)
-            .done(function(conversation) {
-                clearChat();
-                currentConversationId = conversation.id;
+        $('#chat-messages .message').each(function() {
+            const isUser = $(this).hasClass('message-user');
+            const messageContent = $(this).text().trim();
+            const imageUrl = $(this).prev('.message-image-preview').attr('src');
+            
+            // Only add message if there's content or an image
+            if (messageContent || imageUrl) {
+                const messageObj = {
+                    role: isUser ? 'user' : 'assistant',
+                    content: messageContent || ''
+                };
                 
-                // Highlight the selected conversation
-                $('.chat-history').removeClass('active');
-                $('.chat-history[data-conversation-id="' + conversationId + '"]').addClass('active');
-                
-                if (conversation.messages && conversation.messages.length > 0) {
-                    $('#chat-messages').empty(); // Clear the welcome message
-                    conversation.messages.forEach(function(msg) {
-                        addMessage(msg.content, msg.isUser);
-                    });
+                if (imageUrl) {
+                    messageObj.image = imageUrl;
                 }
-            })
-            .fail(function(error) {
-                console.error('Error loading conversation:', error);
-                clearChat();
+                
+                messages.push(messageObj);
+            }
+        });
+
+        // Only save if there are messages and we have a current conversation
+        if (messages.length > 0 && currentConversationId) {
+            // Prepare conversation data
+            const conversationData = {
+                id: currentConversationId,
+                title: $('.chat-history.active .chat-title').text() || 'New Conversation',
+                messages: messages
+            };
+
+            // Send to server
+            $.ajax({
+                url: '/save_conversation',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(conversationData),
+                success: function(response) {
+                    if (response.id && !currentConversationId) {
+                        currentConversationId = response.id;
+                        loadConversations();
+                    }
+                },
+                error: function(error) {
+                    console.error('Error saving conversation:', error);
+                }
             });
+        }
     }
 
     // Function to update conversation title in database
@@ -229,11 +211,67 @@ $(document).ready(function() {
             contentType: 'application/json',
             data: JSON.stringify({
                 id: conversationId,
-                title: newTitle
+                title: newTitle,
+                updateTitleOnly: true
             })
         }).fail(function(error) {
             console.error('Error updating conversation title:', error);
         });
+    }
+
+    // Load conversation messages
+    function loadConversation(conversationId) {
+        if (currentConversationId === conversationId) return;
+        
+        $.get('/get_conversation/' + conversationId)
+            .done(function(conversation) {
+                clearChat(false);
+                currentConversationId = conversation.id;
+                
+                // Highlight the selected conversation
+                $('.chat-history').removeClass('active');
+                $('.chat-history[data-conversation-id="' + conversationId + '"]').addClass('active');
+                
+                if (conversation.messages && conversation.messages.length > 0) {
+                    // Clear existing messages
+                    $('#chat-messages').empty();
+                    
+                    // Sort messages by timestamp if available
+                    const messages = conversation.messages.sort((a, b) => {
+                        const timeA = new Date(a.timestamp || 0);
+                        const timeB = new Date(b.timestamp || 0);
+                        return timeA - timeB;
+                    });
+
+                    // Add messages one by one with proper delays
+                    let messageIndex = 0;
+                    function addNextMessage() {
+                        if (messageIndex < messages.length) {
+                            const msg = messages[messageIndex];
+                            const isUser = msg.role === 'user';
+                            
+                            if (msg.image) {
+                                addMessage(msg.content || '', isUser, msg.image);
+                            } else {
+                                addMessage(msg.content, isUser);
+                            }
+                            
+                            messageIndex++;
+                            // Add a small delay between messages for better animation
+                            setTimeout(addNextMessage, isUser ? 100 : 700);
+                        }
+                    }
+                    
+                    addNextMessage();
+                } else {
+                    // Only show welcome message if there are no messages
+                    addMessage("Hello! I'm your diabetes management assistant. How can I help you today?", false);
+                }
+            })
+            .fail(function(error) {
+                console.error('Error loading conversation:', error);
+                clearChat(true); // Show welcome message on error
+            });
     }
 
     // Handle new chat button click
@@ -256,21 +294,18 @@ $(document).ready(function() {
         });
     });
 
-    // Handle chat history item click
+    // Event handlers for chat history interactions
     $(document).on('click', '.chat-history', function(e) {
         if (!$(e.target).closest('.chat-actions').length) {
             const conversationId = $(this).attr('data-conversation-id');
             if (conversationId) {
-                // Remove active class from all conversations
                 $('.chat-history').removeClass('active');
-                // Add active class to clicked conversation
                 $(this).addClass('active');
                 loadConversation(conversationId);
             }
         }
     });
 
-    // Handle delete chat button click
     $(document).on('click', '.delete-chat-btn', function(e) {
         e.stopPropagation();
         const chatItem = $(this).closest('.chat-history');
@@ -288,7 +323,6 @@ $(document).ready(function() {
                         clearChat();
                         currentConversationId = null;
                     }
-                    // If no conversations left, load conversations to get the default one
                     if ($('.chat-history').length === 0) {
                         loadConversations();
                     }
@@ -300,44 +334,11 @@ $(document).ready(function() {
         }
     });
 
-    // Save conversation after each message
-    const originalAddMessage = addMessage;
-    addMessage = function(message, isUser = false, imageUrl = null) {
-        originalAddMessage(message, isUser, imageUrl);
-        if (currentConversationId) {
-            saveCurrentConversation();
-        }
-    };
-
-    // Save conversation periodically
-    setInterval(saveCurrentConversation, 30000);
-
-    // Handle edit button click (for dynamically added elements)
     $(document).on('click', '.edit-title-btn', function(e) {
         e.stopPropagation();
         const chatHistoryItem = $(this).closest('.chat-history');
         makeEditable(chatHistoryItem);
     });
-
-    // Update existing chat history items to have edit and delete buttons
-    $('.chat-history').each(function() {
-        const title = $(this).find('span').text();
-        $(this).html(`
-            <i class="fa fa-comments-o"></i>
-            <span class="chat-title">${title}</span>
-            <div class="chat-actions">
-                <button class="edit-title-btn">
-                    <i class="fa fa-pencil"></i>
-                </button>
-                <button class="delete-chat-btn">
-                    <i class="fa fa-trash"></i>
-                </button>
-            </div>
-        `);
-    });
-
-    // Add initial bot message
-    // addMessage("Hello! I'm your diabetes management assistant. How can I help you today?", false);
 
     // Handle chat form submission
     chatForm.submit(function(e) {
@@ -345,23 +346,16 @@ $(document).ready(function() {
         const message = userInput.val().trim();
         const imageFile = imageInput[0].files[0];
         
-        if (!message && !imageFile) {
-            return;
-        }
+        if (!message && !imageFile) return;
 
-        // Clear input
         userInput.val('');
         
-        // Create FormData object
         const formData = new FormData();
-        if (message) {
-            formData.append('message', message);
-        }
-        if (imageFile) {
-            formData.append('image', imageFile);
-        }
+        if (message) formData.append('message', message);
+        if (imageFile) formData.append('image', imageFile);
+        if (currentConversationId) formData.append('conversationId', currentConversationId);
 
-        // Add user message to chat
+        // Display user message immediately
         if (imageFile) {
             const reader = new FileReader();
             reader.onload = function(e) {
@@ -377,7 +371,7 @@ $(document).ready(function() {
         $('.image-preview-container').hide();
         $('#image-input').val('');
 
-        // Send to server
+        // Send message to server
         $.ajax({
             url: '/chat',
             type: 'POST',
@@ -386,8 +380,8 @@ $(document).ready(function() {
             contentType: false,
             success: function(response) {
                 if (response.response) {
+                    // Display bot response after user message
                     addMessage(response.response, false);
-                    saveCurrentConversation(); // Save after bot response
                 }
             },
             error: function(error) {
@@ -397,7 +391,7 @@ $(document).ready(function() {
         });
     });
 
-    // Image upload handling
+    // Image handling
     $('#image-input').change(function(e) {
         const file = e.target.files[0];
         if (file) {
@@ -410,18 +404,14 @@ $(document).ready(function() {
         }
     });
 
-    // Delete image functionality
     $('.delete-image').click(function() {
         $('.image-preview').attr('src', '');
         $('.image-preview-container').hide();
         $('#image-input').val('');
     });
 
-    // Speech recognition
-    if (!('webkitSpeechRecognition' in window)) {
-        $('#start-btn').parent().hide();
-        console.warn("Speech Recognition is not supported in this browser");
-    } else {
+    // Speech recognition setup
+    if ('webkitSpeechRecognition' in window) {
         const recognition = new webkitSpeechRecognition();
         let isRecording = false;
 
@@ -432,27 +422,22 @@ $(document).ready(function() {
         $('#start-btn').click(function() {
             if (!isRecording) {
                 recognition.start();
-                $(this).css('color', '#ff0000'); // Red color when recording
+                $(this).css('color', '#ff0000');
             } else {
                 recognition.stop();
-                $(this).css('color', ''); // Reset color
+                $(this).css('color', '');
             }
             isRecording = !isRecording;
         });
 
         recognition.onresult = function(event) {
-            let interimTranscript = '';
             let finalTranscript = '';
-
             for (let i = event.resultIndex; i < event.results.length; i++) {
                 const transcript = event.results[i][0].transcript;
                 if (event.results[i].isFinal) {
                     finalTranscript += transcript;
-                } else {
-                    interimTranscript += transcript;
                 }
             }
-
             if (finalTranscript) {
                 userInput.val(userInput.val() + finalTranscript);
             }
@@ -466,10 +451,13 @@ $(document).ready(function() {
 
         recognition.onend = function() {
             if (isRecording) {
-                recognition.start(); // Restart if we're still supposed to be recording
+                recognition.start();
             } else {
                 $('#start-btn').css('color', '');
             }
         };
+    } else {
+        $('#start-btn').parent().hide();
+        console.warn("Speech Recognition is not supported in this browser");
     }
 });

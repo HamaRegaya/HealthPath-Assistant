@@ -196,6 +196,11 @@ def chart():
 def chatbot():
     return render_template('chatbot.html')
 
+@app.route('/appointment')
+@login_required
+def appoinment():
+    return render_template('appointment.html')
+
 @app.route('/logout')
 @login_required
 def logout():
@@ -280,10 +285,7 @@ def save_conversation():
         conversation_id = str(result.inserted_id)
     
     return jsonify({'success': True, 'id': conversation_id})
-from dotenv import load_dotenv
-import os
 
-load_dotenv()
 
 @app.route('/config')
 def get_config():

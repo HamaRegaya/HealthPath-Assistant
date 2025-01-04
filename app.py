@@ -121,7 +121,12 @@ def chat():
 
         try:
             # Create the message content and prepare user message for saving
-            user_message = {'role': 'user', 'content': message or ''}
+            user_message = {
+                'role': 'user',
+                'content': message or '',
+                'timestamp': datetime.datetime.now()
+            }
+            
             if image:
                 # Handle image if present
                 image_data = base64.b64encode(image.read()).decode('utf-8')
@@ -142,6 +147,13 @@ def chat():
             if response and hasattr(response, 'content'):
                 ai_response = response.content
                 
+                # Create AI message with timestamp
+                ai_message = {
+                    'role': 'assistant',
+                    'content': ai_response,
+                    'timestamp': datetime.datetime.now()
+                }
+                
                 # Save both user message and AI response to the conversation
                 if conversation_id:
                     conversation = mongo.db.conversations.find_one({"_id": ObjectId(conversation_id)})
@@ -149,7 +161,10 @@ def chat():
                         # Add new messages to existing conversation
                         messages = conversation.get('messages', [])
                         messages.append(user_message)
-                        messages.append({'role': 'assistant', 'content': ai_response})
+                        messages.append(ai_message)
+                        
+                        # Sort messages by timestamp
+                        messages.sort(key=lambda x: x.get('timestamp', datetime.datetime.min))
                         
                         # Update conversation in database
                         mongo.db.conversations.update_one(
@@ -272,10 +287,14 @@ def get_conversation(conversation_id):
     })
     
     if conversation:
+        messages = conversation.get('messages', [])
+        # Sort messages by timestamp if available
+        messages.sort(key=lambda x: x.get('timestamp', datetime.datetime.min).isoformat() if isinstance(x.get('timestamp'), datetime.datetime) else datetime.datetime.min.isoformat())
+        
         return jsonify({
             'id': str(conversation['_id']),
             'title': conversation.get('title', 'New Conversation'),
-            'messages': conversation.get('messages', [])
+            'messages': messages
         })
     return jsonify({'error': 'Conversation not found'}), 404
 

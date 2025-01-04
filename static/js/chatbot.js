@@ -105,12 +105,10 @@ $(document).ready(function() {
                     .addClass('message-image-preview')
                     .attr('src', imageUrl)
                     .attr('alt', 'Uploaded image');
-                chatMessages.append(imagePreview);
+                    chatMessages.append(imagePreview);
             }
-    
             messageDiv.text(message);
             chatMessages.append(messageDiv);
-    
             setTimeout(() => messageDiv.removeClass('message-hidden'), 50);
             chatMessages.scrollTop(chatMessages[0].scrollHeight);
         }
@@ -235,16 +233,36 @@ $(document).ready(function() {
                 $('.chat-history[data-conversation-id="' + conversationId + '"]').addClass('active');
                 
                 if (conversation.messages && conversation.messages.length > 0) {
-                    conversation.messages.forEach(function(msg) {
-                        const isUser = msg.role === 'user';
-                        if (msg.image) {
-                            // If message has an image, display it first
-                            addMessage(msg.content || '', isUser, msg.image);
-                        } else {
-                            // Text-only message
-                            addMessage(msg.content, isUser);
-                        }
+                    // Clear existing messages
+                    $('#chat-messages').empty();
+                    
+                    // Sort messages by timestamp if available
+                    const messages = conversation.messages.sort((a, b) => {
+                        const timeA = new Date(a.timestamp || 0);
+                        const timeB = new Date(b.timestamp || 0);
+                        return timeA - timeB;
                     });
+
+                    // Add messages one by one with proper delays
+                    let messageIndex = 0;
+                    function addNextMessage() {
+                        if (messageIndex < messages.length) {
+                            const msg = messages[messageIndex];
+                            const isUser = msg.role === 'user';
+                            
+                            if (msg.image) {
+                                addMessage(msg.content || '', isUser, msg.image);
+                            } else {
+                                addMessage(msg.content, isUser);
+                            }
+                            
+                            messageIndex++;
+                            // Add a small delay between messages for better animation
+                            setTimeout(addNextMessage, isUser ? 100 : 700);
+                        }
+                    }
+                    
+                    addNextMessage();
                 } else {
                     // Only show welcome message if there are no messages
                     addMessage("Hello! I'm your diabetes management assistant. How can I help you today?", false);
@@ -337,6 +355,7 @@ $(document).ready(function() {
         if (imageFile) formData.append('image', imageFile);
         if (currentConversationId) formData.append('conversationId', currentConversationId);
 
+        // Display user message immediately
         if (imageFile) {
             const reader = new FileReader();
             reader.onload = function(e) {
@@ -347,10 +366,12 @@ $(document).ready(function() {
             addMessage(message, true);
         }
 
+        // Clear image preview
         $('.image-preview').attr('src', '');
         $('.image-preview-container').hide();
         $('#image-input').val('');
 
+        // Send message to server
         $.ajax({
             url: '/chat',
             type: 'POST',
@@ -359,6 +380,7 @@ $(document).ready(function() {
             contentType: false,
             success: function(response) {
                 if (response.response) {
+                    // Display bot response after user message
                     addMessage(response.response, false);
                 }
             },

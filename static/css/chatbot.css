@@ -185,28 +185,11 @@
     transform: translateY(-2px);
 }
 
-.message-image-preview {
-    width: 20%;
-    height: auto;
-    margin-bottom: 8px;
-    border-radius: 8px;
-    display: block;
-    margin-left: 79%;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.message-user .message-image-preview {
-    margin-left: auto; /* Align to the right for user messages */
-}
-
-.message-bot .message-image-preview {
-    margin-right: auto; /* Align to the left for bot messages */
-}
-
 .message-bot {
     background-color: #f0f2f5;
     align-self: flex-start;
     border-bottom-left-radius: 5px;
+    order: unset;
 }
 
 .message-bot p {
@@ -217,21 +200,18 @@
     margin-bottom: 0;
 }
 
-/* Style for lists (Markdown bullet points) */
 .message-bot ul {
     margin: 10px 0;
     padding-left: 20px;
     list-style-type: disc;
 }
 
-/* Style for ordered lists (Markdown numbered lists) */
 .message-bot ol {
     margin: 10px 0;
     padding-left: 20px;
     list-style-type: decimal;
 }
 
-/* Style for images */
 .message-bot img {
     max-width: 100%;
     height: auto;
@@ -239,7 +219,6 @@
     margin: 10px 0;
 }
 
-/* Style for headers */
 .message-bot h1,
 .message-bot h2,
 .message-bot h3 {
@@ -247,7 +226,6 @@
     font-weight: bold;
 }
 
-/* Style for bold and italic text */
 .message-bot strong {
     font-weight: bold;
 }
@@ -261,6 +239,25 @@
     color: white;
     align-self: flex-end;
     border-bottom-right-radius: 5px;
+    order: unset;
+}
+
+.message-image-preview {
+    width: 20%;
+    height: auto;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    display: block;
+    margin-left: 79%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.message-user .message-image-preview {
+    margin-left: auto;
+}
+
+.message-bot .message-image-preview {
+    margin-right: auto;
 }
 
 .chat-input-area {

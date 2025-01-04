@@ -363,6 +363,9 @@
 								<button onclick="generateReport()" class="btn" style="background: #ffffff;color: #757575;padding: 12px 25px;border-radius: 5px;border: none;cursor: pointer;font-weight: 500;transition: all 0.3s ease;">
 									Generate AI Report
 								</button>
+								<button onclick="showPreviousReport()" class="btn" style="background: #ffffff;color: #757575;padding: 12px 25px;border-radius: 5px;border: none;cursor: pointer;font-weight: 500;transition: all 0.3s ease;margin-top: 20px;">
+									Previous Report
+								</button>
 							</div>
 
 							<!-- Report Modal -->
@@ -727,6 +730,53 @@
 					reportContent.style.display = 'block';
 				} catch (error) {
 					reportContent.innerHTML = '<div style="color: #ff0000; text-align: center; padding: 20px;">Error generating report. Please try again.</div>';
+					reportLoading.style.display = 'none';
+					reportContent.style.display = 'block';
+				}
+			}
+
+			// Function to show previous report
+			async function showPreviousReport() {
+				const reportLoading = document.getElementById('reportLoading');
+				const reportContent = document.getElementById('reportContent');
+				
+				// Show modal and loading state
+				openModal();
+				reportLoading.style.display = 'flex';
+				reportContent.style.display = 'none';
+
+				try {
+					const response = await fetch('/api/latest-glucose-report', {
+						method: 'GET',
+						headers: {
+							'Content-Type': 'application/json',
+						}
+					});
+
+					if (!response.ok) {
+						throw new Error('No previous reports found');
+					}
+
+					const result = await response.json();
+					
+					// Display the report with timestamp
+					const timestamp = new Date(result.timestamp).toLocaleString();
+					reportContent.innerHTML = `
+						<div style="margin-bottom: 15px; color: #666; font-size: 0.9rem;">
+							Report generated on: ${timestamp}
+						</div>
+						${result.report}
+					`;
+					
+					reportLoading.style.display = 'none';
+					reportContent.style.display = 'block';
+				} catch (error) {
+					reportContent.innerHTML = `
+						<div style="text-align: center; padding: 20px; color: #666;">
+							<p>No previous reports available.</p>
+							<p>Generate a new report to view your glucose analysis.</p>
+						</div>
+					`;
 					reportLoading.style.display = 'none';
 					reportContent.style.display = 'block';
 				}

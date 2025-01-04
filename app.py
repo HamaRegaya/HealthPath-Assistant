@@ -495,16 +495,52 @@ def generate_glucose_report():
         - Concise language for easy understanding by the patient.
         """
 
-
-        from langchain.schema import HumanMessage
         human_message = HumanMessage(content=[{"type": "text", "text": analysis_message}])
-        
         response = llm.invoke([human_message])
+        report_content = response.content
 
-        return jsonify({"report": response.content})
+        # Save the report to the database
+        if current_user.is_authenticated:
+            report = {
+                'user_id': str(current_user.id),
+                'content': report_content,
+                'timestamp': datetime.datetime.now(),
+                'statistics': {
+                    'average': avg_glucose,
+                    'maximum': max_glucose,
+                    'minimum': min_glucose,
+                    'high_readings': high_readings,
+                    'low_readings': low_readings
+                }
+            }
+            mongo.db.reports.insert_one(report)
+
+        return jsonify({"report": report_content})
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@app.route('/api/latest-glucose-report', methods=['GET'])
+@login_required
+def get_latest_glucose_report():
+    try:
+        # Find the most recent report for the current user
+        latest_report = mongo.db.reports.find_one(
+            {'user_id': str(current_user.id)},
+            sort=[('timestamp', -1)]
+        )
+        
+        if latest_report:
+            return jsonify({
+                'report': latest_report['content'],
+                'timestamp': latest_report['timestamp'].isoformat()
+            })
+        else:
+            return jsonify({'message': 'No previous reports found'}), 404
+            
+    except Exception as e:
+        print(f"Error fetching latest report: {str(e)}")
+        return jsonify({'error': 'Failed to fetch the latest report'}), 500
 
 @app.route('/delete_conversation/<conversation_id>', methods=['DELETE'])
 @login_required

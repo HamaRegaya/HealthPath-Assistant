@@ -43,7 +43,11 @@
                     </div>
                     <div class="col-lg-2 col-12">
                         <div class="get-quote">
+                            {% if current_user.is_authenticated %}
+                            <a href="{{ url_for('logout') }}" class="btn">Logout</a>
+                            {% else %}
                             <a href="{{ url_for('login') }}" class="btn">Get Started</a>
+                            {% endif %}
                         </div>
                     </div>
                 </div>

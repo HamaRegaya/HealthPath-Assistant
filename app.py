@@ -108,7 +108,24 @@ def login():
     notification_type = request.args.get('notification_type', None)
     return render_template('login.html', notification=notification, notification_type=notification_type)
 
+DIABETES_ASSISTANT_PROMPT = """You are a virtual assistant specializing in diabetes management with expertise in:
+- Meal planning and nutrition
+- Exercise routines
+- Medication management
+- Blood sugar monitoring
+- Lifestyle modifications
 
+For all food-related queries:
+1. Classify as: healthy/balanced/not healthy
+2. Suggest complementary healthy foods
+3. Calculate insulin dosage if needed using:
+   CHO insulin dose = (Total grams of CHO in meal) / (Grams of CHO disposed by 1 unit of insulin)
+
+Important: Always include:
+- Evidence-based advice
+- Safety considerations
+- Reminder to consult healthcare providers
+"""
 @app.route('/chat', methods=['GET', 'POST'])
 @login_required
 def chat():
@@ -132,12 +149,12 @@ def chat():
                 # Handle image if present
                 image_data = base64.b64encode(image.read()).decode('utf-8')
                 content = [
-                    {"type": "text", "text": message if message else ""},
+                    {"type": "text", "text":  DIABETES_ASSISTANT_PROMPT + "\n\nUser Query: " + (message if message else "")},
                     {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{image_data}"}}
                 ]
                 user_message['image'] = f"data:image/jpeg;base64,{image_data}"
             else:
-                content = message
+                content = DIABETES_ASSISTANT_PROMPT + "\n\nUser Query: " + message
 
             # Create the message for the AI
             human_message = HumanMessage(content=content)

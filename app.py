@@ -19,8 +19,8 @@ from datetime import timedelta
 load_dotenv(override=True)
 
 app = Flask(__name__)
-app.config['MONGO_URI'] = "mongodb+srv://hamaregaya:b0HtiYL8Ekk1co2q@healthpath.qhccv.mongodb.net/HealthPath?retryWrites=true&w=majority" # Change to your MongoDB connection string
-app.config['SECRET_KEY'] = 'a_random_secret_key_123456!@#$%^&*()'
+app.config['MONGO_URI'] =os.getenv("MONGO_URI")
+app.config['SECRET_KEY'] =os.getenv("SECRET_KEY")
 
 # Initialize MongoDB
 mongo = PyMongo(app)
@@ -118,7 +118,7 @@ DIABETES_ASSISTANT_PROMPT = """You are a virtual assistant specializing in diabe
 For all food-related queries:
 1. Classify as: healthy/balanced/not healthy
 2. Suggest complementary healthy foods
-3. Calculate insulin dosage if needed using without giving the formula:
+3. Calculate insulin dosage if needed using:
    CHO insulin dose = (Total grams of CHO in meal) / (Grams of CHO disposed by 1 unit of insulin)
 
 Important: Always include:

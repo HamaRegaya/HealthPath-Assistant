@@ -36,7 +36,7 @@
      ```
    - Offers general health tips and answers to user inquiries.
 
-![3d-avatar](https://github.com/user-attachments/assets/c3bea64e-461f-4679-ab95-7c98e851fb1b)
+![Blue Digital Website New Features Announcement Video](https://github.com/user-attachments/assets/a04ea09c-4a44-45e0-9c2a-63df31bd94f9)
 
 ### 3. **Glucose Level Tracking**
    - Tracks glucose levels in real time using Continuous Glucose Monitoring (CGM) integration.

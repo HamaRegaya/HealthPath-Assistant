@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<style>
+    .share {
+        display: flex;
+        align-items: center;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+    }
+
+    .share-title {
+        color: #666;
+        margin-right: 15px;
+        font-size: 16px;
+    }
+
+    .social-share {
+        display: flex;
+        gap: 10px;
+    }
+
+    .social-share a {
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 3px;
+        color: #fff;
+        transition: opacity 0.3s ease;
+    }
+
+    .social-share a:hover {
+        opacity: 0.8;
+    }
+
+    .social-share .facebook {
+        background-color: #3b5998;
+    }
+
+    .social-share .twitter {
+        background-color: #1da1f2;
+    }
+
+    .social-share .linkedin {
+        background-color: #0077b5;
+    }
+
+    .social-share i {
+        font-size: 16px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Breadcrumbs -->
+<div class="breadcrumbs overlay">
+    <div class="container">
+        <div class="bread-inner">
+            <div class="row">
+                <div class="col-12">
+                    <h2>{{ article.title }}</h2>
+                    <ul class="bread-list">
+                        <li><a href="/">Home</a></li>
+                        <li><i class="icofont-simple-right"></i></li>
+                        <li><a href="{{ url_for('articles') }}">Articles</a></li>
+                        <li><i class="icofont-simple-right"></i></li>
+                        <li class="active">{{ article.title }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Single News -->
+<section class="news-single section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-12">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="single-main">
+                            <!-- News Head -->
+                            <div class="news-head">
+                                <img src="{{ article.image_url }}" alt="{{ article.title }}">
+                            </div>
+                            <!-- News Title -->
+                            <h1 class="news-title"><a href="#">{{ article.title }}</a></h1>
+                            <!-- Meta -->
+                            <div class="meta">
+                                <div class="meta-left">
+                                    <span class="author"><a href="#"><i class="fa fa-user"></i>{{ article.author }}</a></span>
+                                    <span class="date"><i class="fa fa-clock-o"></i>{{ article.date }}</span>
+                                </div>
+                            </div>
+                            <!-- News Text -->
+                            <div class="news-text">
+                                {{ article.content | safe }}
+                            </div>
+                            <!-- Share -->
+                            <div class="share">
+                                <span class="share-title">Share :</span>
+                                <div class="social-share">
+                                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.url|urlencode }}" target="_blank" class="facebook">
+                                        <i class="fa fa-facebook"></i>
+                                    </a>
+                                    <a href="https://twitter.com/intent/tweet?url={{ request.url|urlencode }}&text={{ article.title|urlencode }}" target="_blank" class="twitter">
+                                        <i class="fa fa-twitter"></i>
+                                    </a>
+                                    <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ request.url|urlencode }}&title={{ article.title|urlencode }}" target="_blank" class="linkedin">
+                                        <i class="fa fa-linkedin"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-12">
+                <div class="main-sidebar">
+                    <!-- Single Widget -->
+                    <div class="single-widget recent-post">
+                        <h3 class="title">Recent Articles</h3>
+                        {% for recent in recent_articles %}
+                        <div class="single-post">
+                            <div class="image">
+                                <img src="{{ recent.image_url }}" alt="{{ recent.title }}">
+                            </div>
+                            <div class="content">
+                                <h5><a href="{{ url_for('article_detail', article_id=recent._id) }}">{{ recent.title }}</a></h5>
+                                <ul class="comment">
+                                    <li><i class="fa fa-calendar"></i>{{ recent.date }}</li>
+                                </ul>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <!--/ End Single Widget -->
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--/ End Single News -->
+
+{% endblock %}

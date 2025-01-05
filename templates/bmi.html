@@ -1,0 +1,359 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Breadcrumbs -->
+<div class="breadcrumbs overlay">
+    <div class="container">
+        <div class="bread-inner">
+            <div class="row">
+                <div class="col-12">
+                    <h2>BMI Calculator</h2>
+                    <ul class="bread-list">
+                        <li><a href="/">Home</a></li>
+                        <li><i class="icofont-simple-right"></i></li>
+                        <li class="active">BMI Calculator</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Start BMI Calculator Section -->
+<section class="bmi-section section">
+    <div class="container">
+        <div class="row">
+            <!-- BMI Calculator -->
+            <div class="col-lg-4">
+                <div class="bmi-calculator-card">
+                    <h3>Calculate Your BMI</h3>
+                    <p class="subtitle">Enter your height and weight</p>
+                    <div class="calculator-form">
+                        <div class="form-group">
+                            <label>Height</label>
+                            <div class="input-group">
+                                <input type="number" id="height" class="form-control" placeholder="Enter height">
+                                <div class="input-group-append">
+                                    <span class="input-group-text">cm</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Weight</label>
+                            <div class="input-group">
+                                <input type="number" id="weight" class="form-control" placeholder="Enter weight">
+                                <div class="input-group-append">
+                                    <span class="input-group-text">kg</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" class="btn calculate-btn" onclick="calculateBMI()">Calculate BMI</button>
+                        
+                        <div id="bmi-result" class="mt-4" style="display: none;">
+                            <h4>Your BMI Result:</h4>
+                            <div class="result-value"></div>
+                            <div class="result-category"></div>
+                            <div class="result-risk"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- BMI Information -->
+            <div class="col-lg-8">
+                <div class="bmi-info-card">
+                    <h3>What is BMI?</h3>
+                    <p>BMI is a simple calculation using a person's height and weight that uses to determine a classification. The formula is BMI = kg/m², where kg is weight in kilograms and m² is height in metres squared.</p>
+                    
+                    <h4>Important Notes:</h4>
+                    <ul class="important-notes">
+                        <li>BMI does not determine body fatness or general health</li>
+                        <li>Body composition and fat distribution can vary widely for similar BMIs</li>
+                        <li>This is one of many tools used by health care professionals</li>
+                        <li>Waist size measurement is also important for health risk assessment</li>
+                    </ul>
+
+                    <h4>BMI Limitations:</h4>
+                    <ul class="limitations-list">
+                        <li>Muscle builders</li>
+                        <li>Long-distance athletes</li>
+                        <li>Pregnant individuals</li>
+                        <li>Elderly populations</li>
+                        <li>Young children</li>
+                        <li>People with physical disabilities</li>
+                        <li>Certain ethnicities</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- BMI Categories Table -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <h3 class="mb-4">Health Risk Classification According to BMI</h3>
+                <div class="bmi-table">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Classification</th>
+                                <th>BMI Category (kg/m²)</th>
+                                <th>Risk of Health Problems</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Underweight</td>
+                                <td>< 18.5</td>
+                                <td>Increased</td>
+                            </tr>
+                            <tr>
+                                <td>Normal Weight</td>
+                                <td>18.5 - 24.9</td>
+                                <td>Least</td>
+                            </tr>
+                            <tr>
+                                <td>Overweight</td>
+                                <td>25.0 - 29.9</td>
+                                <td>Increased</td>
+                            </tr>
+                            <tr>
+                                <td>Obese Class I</td>
+                                <td>30.0 - 34.9</td>
+                                <td>High</td>
+                            </tr>
+                            <tr>
+                                <td>Obese Class II</td>
+                                <td>35.0 - 39.9</td>
+                                <td>Very High</td>
+                            </tr>
+                            <tr>
+                                <td>Obese Class III</td>
+                                <td>≥ 40.0</td>
+                                <td>Extremely High</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diabetes and BMI Section -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="diabetes-bmi-info">
+                    <h3>Diabetes and BMI</h3>
+                    <p>A BMI that falls within a category above "normal" is associated with an increased risk of developing type 2 diabetes, along with other chronic conditions like heart disease, hypertension, and certain forms of cancer. For people living with diabetes, some medications, including insulin, can make weight management more challenging and may contribute to a higher BMI.</p>
+                    <p>When used together with other indicators, BMI can help identify those who may benefit from obesity management. Always consult with your healthcare provider about what is right for you.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .bmi-section {
+        padding: 50px 0;
+        background: #f9f9f9;
+    }
+
+    .bmi-calculator-card {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .bmi-calculator-card h3 {
+        color: #333;
+        margin-bottom: 5px;
+        font-size: 24px;
+    }
+
+    .subtitle {
+        color: #666;
+        margin-bottom: 25px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #555;
+    }
+
+    .input-group {
+        display: flex;
+        align-items: center;
+    }
+
+    .input-group-text {
+        background: #f8f9fa;
+        border: 1px solid #ced4da;
+        border-left: none;
+        color: #666;
+        padding: 8px 12px;
+    }
+
+    .form-control {
+        border: 1px solid #ced4da;
+        padding: 8px 12px;
+        border-radius: 4px 0 0 4px;
+    }
+
+    .calculate-btn {
+        width: 100%;
+        background: #1A76D1;
+        color: white;
+        padding: 12px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .calculate-btn:hover {
+        background: #1557a0;
+    }
+
+    .bmi-info-card {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        height: 100%;
+    }
+
+    .bmi-info-card h3 {
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    .bmi-info-card h4 {
+        color: #444;
+        margin: 20px 0 10px;
+    }
+
+    .important-notes, .limitations-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .important-notes li, .limitations-list li {
+        padding: 5px 0;
+        color: #666;
+        position: relative;
+        padding-left: 20px;
+    }
+
+    .important-notes li:before, .limitations-list li:before {
+        content: "•";
+        color: #1A76D1;
+        position: absolute;
+        left: 0;
+    }
+
+    .bmi-table {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .table {
+        margin: 0;
+    }
+
+    .table th {
+        background: #f8f9fa;
+        color: #333;
+        font-weight: 600;
+    }
+
+    .table td {
+        color: #666;
+    }
+
+    #bmi-result {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 5px;
+        margin-top: 20px;
+    }
+
+    .result-value {
+        font-size: 24px;
+        font-weight: bold;
+        color: #1A76D1;
+        margin: 10px 0;
+    }
+
+    .result-category {
+        color: #444;
+        font-size: 18px;
+        margin-bottom: 5px;
+    }
+
+    .result-risk {
+        color: #666;
+    }
+
+    .diabetes-bmi-info {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function calculateBMI() {
+    const height = document.getElementById('height').value / 100; // Convert cm to m
+    const weight = document.getElementById('weight').value;
+    
+    if (!height || !weight || height <= 0 || weight <= 0) {
+        alert('Please enter valid height and weight values');
+        return;
+    }
+    
+    const bmi = weight / (height * height);
+    const resultDiv = document.getElementById('bmi-result');
+    const resultValue = resultDiv.querySelector('.result-value');
+    const resultCategory = resultDiv.querySelector('.result-category');
+    const resultRisk = resultDiv.querySelector('.result-risk');
+    
+    let category, risk;
+    if (bmi < 18.5) {
+        category = 'Underweight';
+        risk = 'Increased risk of health problems';
+    } else if (bmi < 25) {
+        category = 'Normal Weight';
+        risk = 'Least risk of health problems';
+    } else if (bmi < 30) {
+        category = 'Overweight';
+        risk = 'Increased risk of health problems';
+    } else if (bmi < 35) {
+        category = 'Obese Class I';
+        risk = 'High risk of health problems';
+    } else if (bmi < 40) {
+        category = 'Obese Class II';
+        risk = 'Very high risk of health problems';
+    } else {
+        category = 'Obese Class III';
+        risk = 'Extremely high risk of health problems';
+    }
+    
+    resultValue.textContent = `BMI: ${bmi.toFixed(1)}`;
+    resultCategory.textContent = `Category: ${category}`;
+    resultRisk.textContent = risk;
+    resultDiv.style.display = 'block';
+}
+</script>
+{% endblock %}

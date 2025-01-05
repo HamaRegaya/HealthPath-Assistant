@@ -30,10 +30,10 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
-print(os.getenv("AZURE_OPENAI_CHAT_DEPLOYMENT_NAME"))
-print(os.getenv("AZURE_OPENAI_ENDPOINT"))
-print(os.getenv("AZURE_OPENAI_API_KEY"))
-print(os.getenv("AZURE_OPENAI_API_VERSION"))
+# print(os.getenv("AZURE_OPENAI_CHAT_DEPLOYMENT_NAME"))
+# print(os.getenv("AZURE_OPENAI_ENDPOINT"))
+# print(os.getenv("AZURE_OPENAI_API_KEY"))
+# print(os.getenv("AZURE_OPENAI_API_VERSION"))
 # Initialize Azure OpenAI
 llm = AzureChatOpenAI(
     deployment_name=os.getenv("AZURE_OPENAI_CHAT_DEPLOYMENT_NAME"),
@@ -567,6 +567,29 @@ def delete_conversation(conversation_id):
         'user_id': str(current_user.id)
     })
     return jsonify({'success': True if result.deleted_count > 0 else False})
+
+@app.route('/articles')
+def articles():
+    # Fetch articles from MongoDB
+    articles = list(mongo.db.articles.find().sort('date', -1))
+    return render_template('articles.html', articles=articles)
+
+@app.route('/article/<article_id>')
+def article_detail(article_id):
+    # Fetch the specific article
+    article = mongo.db.articles.find_one({'_id': ObjectId(article_id)})
+    if not article:
+        flash('Article not found', 'error')
+        return redirect(url_for('articles'))
+    
+    # Fetch recent articles for sidebar
+    recent_articles = list(mongo.db.articles.find({'_id': {'$ne': ObjectId(article_id)}}).sort('date', -1).limit(5))
+    
+    return render_template('article_detail.html', article=article, recent_articles=recent_articles)
+
+@app.route('/bmi')
+def bmi_calculator():
+    return render_template('bmi.html')
 
 if __name__ == '__main__':
     app.run(debug=True)

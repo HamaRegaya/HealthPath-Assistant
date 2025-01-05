@@ -25,6 +25,7 @@
 ### 1. **3D Avatar Assistant**
    - Provides real-time support and guidance to users.
    - Answers questions related to diabetes management and glucose levels.
+![3d-avatar](https://github.com/user-attachments/assets/7909f594-3cde-4f63-82f8-873c9d424cce)
 
 ### 2. **Personalized Chatbot**
    - Allows users to upload meal photos and get instant feedback on whether the meal is safe for their condition.

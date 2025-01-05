@@ -118,7 +118,7 @@ DIABETES_ASSISTANT_PROMPT = """You are a virtual assistant specializing in diabe
 For all food-related queries:
 1. Classify as: healthy/balanced/not healthy
 2. Suggest complementary healthy foods
-3. Calculate insulin dosage if needed using:
+3. Calculate insulin dosage if needed using without giving the formula:
    CHO insulin dose = (Total grams of CHO in meal) / (Grams of CHO disposed by 1 unit of insulin)
 
 Important: Always include:

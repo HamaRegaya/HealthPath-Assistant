@@ -36,9 +36,14 @@
      ```
    - Offers general health tips and answers to user inquiries.
 
+![3d-avatar](https://github.com/user-attachments/assets/c3bea64e-461f-4679-ab95-7c98e851fb1b)
+
 ### 3. **Glucose Level Tracking**
    - Tracks glucose levels in real time using Continuous Glucose Monitoring (CGM) integration.
    - Displays glucose trends by day or hour for better visualization.
+
+![Blue Digital Website New Features Announcement Video (2)](https://github.com/user-attachments/assets/f5374539-c329-4f95-9b24-41a5837fa148)
+
 
 ### 4. **Glucose Management Report**
    - Generates a detailed report with:
@@ -46,11 +51,20 @@
      - Key patterns and trends.
      - Recommendations for improved management.
 
+![Blue Digital Website New Features Announcement Video (3)](https://github.com/user-attachments/assets/31401c13-ca01-45ad-ac61-9c0ffbcd8d81)
+
+
 ### 5. **Appointment Scheduling**
    - Includes a calendar feature to book and manage appointments for diabetes care.
 
+![Blue Digital Website New Features Announcement Video (4)](https://github.com/user-attachments/assets/32f08cf8-8c82-4847-9ac3-2e2088540595)
+
+
 ### 6. **Diabetes Care Blogs**
    - Provides curated articles on the latest developments in diabetes management.
+
+![Blue Digital Website New Features Announcement Video (5)](https://github.com/user-attachments/assets/28506748-3a15-4f2a-ab05-3b4638925379)
+
 
 ### 7. **Proactive Alerts**
    - Notifies users about glucose trends and recommended actions to stay ahead of potential issues.

@@ -122,6 +122,7 @@ We welcome contributions to HealthPath! Here’s how you can help:
    ```
 5. Submit a pull request.
 <h2 id="Structure">🧐 Structure</h2>
+
 ```
 HealthPath-Assistant/
 |-- .venv/                                 # Virtual environment folder
@@ -141,6 +142,7 @@ HealthPath-Assistant/
 |-- .env-example
 |-- test_app.py
 ├── .gitignore
+```
 
 
 <h2 id="license">🔒 License</h2>

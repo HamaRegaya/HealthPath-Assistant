@@ -247,6 +247,7 @@ def register():
 
 
 @app.route('/avatar')
+@login_required
 def avatar():
     return render_template('avatar.html')
 @app.route('/about')
@@ -254,6 +255,7 @@ def about():
     return render_template('about.html')
 
 @app.route('/chart')
+@login_required
 def chart():
     return render_template('chart-and-report.html')
 

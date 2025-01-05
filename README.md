@@ -4,8 +4,7 @@
   HealthPath is an innovative web application designed to empower diabetes patients by simplifying their health management journey. With features like a 3D assistant, personalized chatbot, glucose level tracking, and much more, HealthPath offers a comprehensive solution for diabetes care.
 </p>
 
-<img src="static/img/gifreadme.gif" alt="HealthPath Screenshot" width="auto" height="auto">
-
+<img src="static/img/gifreadme.gif" alt="HealthPath Screenshot" width="auto" height="auto">';
 <h2>🗂️ Table of Contents</h2>
 <ul>
   <li><a href="#features">💡 Features</a></li>
@@ -64,8 +63,7 @@ Developing HealthPath during a hackathon posed challenges like tight deadlines a
 
 <h2 id="team">👥 Team</h2>
 
-<img src="static/img/team.jpg" alt="Team Photo" width="auto" height="auto">
-
+<img src="static/img/team.jpg" alt="Team Photo" width="auto" height="auto">';
 <h2 id="installation">⚙️ Installation</h2>
 
 Follow these steps to set up the project locally:
@@ -178,8 +176,13 @@ To run this project, you will need to add the following environment variables to
 
 - **Flask**: A micro web framework for Python.
 - **MongoDB**: A NoSQL database for storing user data and conversations.
-- **Azure OpenAI**: For natural language processing and chatbot functionalities.
-- **Azure Speech**: For speech-to-text and text-to-speech capabilities.
+  - **Azure OpenAI**: For natural language processing and chatbot functionalities.
+  - **Azure Speech Services**: For speech-to-text and text-to-speech capabilities.
+  - **Azure Cognitive Services**: For advanced AI capabilities.
+  - **Azure Container Registry**: For container image management.
+  - **Azure Web App**: For application hosting and deployment.
+  - **Azure Search Service**: For enhanced search capabilities.
+  - **Azure Blob Storage**: For cloud storage and data management.
 - **Langchain**: For managing conversation chains and memory.
 - **Pillow**: For image processing.
 - **Bootstrap**: For responsive front-end design.
